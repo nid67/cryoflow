@@ -1,0 +1,158 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@theme {
+  --color-on-primary: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-secondary: #ffffff;
+  --color-tertiary: #404445;
+  --color-on-surface: #041b3c;
+  --color-surface-dim: #cadaff;
+  --color-surface-tint: #0c56d0;
+  --color-surface-variant: #d7e2ff;
+  --color-on-error-container: #93000a;
+  --color-surface-container-highest: #d7e2ff;
+  --color-primary-container: #0052cc;
+  --color-primary-fixed-dim: #b2c5ff;
+  --color-tertiary-fixed-dim: #c4c7c9;
+  --color-tertiary-fixed: #e0e3e5;
+  --color-on-tertiary-fixed-variant: #444749;
+  --color-surface-container-low: #f1f3ff;
+  --color-surface-container: #e8edff;
+  --color-on-primary-fixed: #001848;
+  --color-on-background: #041b3c;
+  --color-surface-container-high: #e0e8ff;
+  --color-surface-bright: #f9f9ff;
+  --color-secondary-container: #0866ff;
+  --color-secondary-fixed-dim: #b3c5ff;
+  --color-on-error: #ffffff;
+  --color-on-tertiary: #ffffff;
+  --color-on-secondary-container: #f9f7ff;
+  --color-tertiary-container: #585b5d;
+  --color-background: #f9f9ff;
+  --color-on-secondary-fixed: #00184a;
+  --color-outline-variant: #c3c6d6;
+  --color-on-primary-fixed-variant: #0040a2;
+  --color-secondary-fixed: #dbe1ff;
+  --color-primary-fixed: #dae2ff;
+  --color-outline: #737685;
+  --color-on-primary-container: #c4d2ff;
+  --color-inverse-primary: #b2c5ff;
+  --color-on-tertiary-container: #d1d3d5;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface: #f9f9ff;
+  --color-inverse-surface: #1d3052;
+  --color-on-secondary-fixed-variant: #003fa5;
+  --color-inverse-on-surface: #edf0ff;
+  --color-error: #ba1a1a;
+  --color-on-surface-variant: #434654;
+  --color-secondary: #0050cd;
+  --color-on-tertiary-fixed: #191c1e;
+  --color-primary: #003d9b;
+
+  --container-xs: 20rem;
+  --container-sm: 24rem;
+  --container-md: 28rem;
+  --container-lg: 32rem;
+  --container-xl: 36rem;
+  --container-2xl: 42rem;
+  --container-3xl: 48rem;
+  --container-4xl: 56rem;
+  --container-5xl: 64rem;
+  --container-6xl: 72rem;
+  --container-7xl: 80rem;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-gutter: 16px;
+  --spacing-container-margin: 24px;
+
+  --font-body-md: Inter, sans-serif;
+  --font-headline-md: Inter, sans-serif;
+  --font-headline-lg-mobile: Inter, sans-serif;
+  --font-headline-xl: Inter, sans-serif;
+  --font-code: Inter, monospace;
+  --font-body-lg: Inter, sans-serif;
+  --font-headline-lg: Inter, sans-serif;
+  --font-label-md: Inter, sans-serif;
+
+  --font-size-body-md: 14px;
+  --font-size-headline-md: 20px;
+  --font-size-headline-lg-mobile: 24px;
+  --font-size-headline-xl: 36px;
+  --font-size-code: 13px;
+  --font-size-body-lg: 16px;
+  --font-size-headline-lg: 28px;
+  --font-size-label-md: 12px;
+}
+
+/* Custom design utilities */
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid #c3c6d6;
+}
+
+.soft-shadow {
+  box-shadow: 0px 4px 16px rgba(0, 80, 205, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Typography Utility Helper Classes matching design system */
+.text-headline-xl {
+  font-size: 36px;
+  line-height: 44px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.text-headline-lg {
+  font-size: 28px;
+  line-height: 36px;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+.text-headline-md {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+}
+
+.text-body-lg {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+.text-body-md {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.text-label-md {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f3ff;
+}
+::-webkit-scrollbar-thumb {
+  background: #c3c6d6;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0050cd;
+}
