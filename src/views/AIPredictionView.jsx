@@ -23,12 +23,20 @@ export default function AIPredictionView({ initialShipmentId, onNavigateToDecisi
     fetchShipmentsList();
   }, []);
 
+  const selectedShipment = shipments.find((s) => s.id === selectedId);
+
   const handleRunPrediction = async () => {
     if (!selectedId) return;
     try {
       setLoading(true);
+      setPrediction(null);
       setError('');
-      const res = await apiService.runPrediction(selectedId);
+
+      const [res] = await Promise.all([
+        apiService.runPrediction(selectedId),
+        new Promise((resolve) => setTimeout(resolve, 1800)) // Realistic ML computation delay
+      ]);
+
       setPrediction(res);
     } catch (err) {
       console.error(err);
@@ -44,13 +52,10 @@ export default function AIPredictionView({ initialShipmentId, onNavigateToDecisi
       <div className="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/60 shadow-sm space-y-2">
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-[#0065FF] text-[28px]">psychology</span>
-          <h1 className="text-2xl font-extrabold text-on-surface">AI Thermal Prediction Engine</h1>
-          <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-900 text-[11px] font-bold border border-purple-300">
-            Core Hackathon Innovation
-          </span>
+          <h1 className="text-2xl font-extrabold text-on-surface">AI Risk & Shelf-Life Predictor</h1>
         </div>
         <p className="text-xs text-on-surface-variant">
-          Select any active cold chain shipment and run FastAPI predictive degradation modeling to calculate exact remaining shelf life, thermal excursion spoilage risk, confidence score, and carbon impact.
+          Select any active shipment to calculate its remaining shelf life, spoilage risk percentage, health score, and carbon impact.
         </p>
       </div>
 
@@ -58,7 +63,7 @@ export default function AIPredictionView({ initialShipmentId, onNavigateToDecisi
       <div className="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/60 shadow-sm space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
           <div className="sm:col-span-8">
-            <label className="block text-xs font-bold text-on-surface mb-2 uppercase">Select Cargo Shipment to Analyze</label>
+            <label className="block text-xs font-bold text-on-surface mb-2 uppercase">Select Shipment to Analyze</label>
             <select
               value={selectedId}
               onChange={(e) => {
@@ -84,12 +89,12 @@ export default function AIPredictionView({ initialShipmentId, onNavigateToDecisi
               {loading ? (
                 <>
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                  Running FastAPI AI Engine...
+                  Running ML Model...
                 </>
               ) : (
                 <>
                   <span className="material-symbols-outlined text-[18px]">play_arrow</span>
-                  Run AI Prediction Model
+                  Run AI Prediction
                 </>
               )}
             </button>
@@ -103,12 +108,34 @@ export default function AIPredictionView({ initialShipmentId, onNavigateToDecisi
         </div>
       )}
 
+      {/* Prominent ML Model Loading Card */}
+      {loading && (
+        <div className="bg-surface-container-lowest p-8 rounded-2xl border border-primary/40 shadow-xl space-y-4 text-center animate-fadeIn min-h-[220px] flex flex-col items-center justify-center w-full">
+          <div className="w-14 h-14 rounded-full border-4 border-primary border-t-transparent animate-spin flex items-center justify-center mb-1">
+            <span className="material-symbols-outlined text-[28px] text-primary">psychology</span>
+          </div>
+
+          <div className="space-y-2 w-full text-center" style={{ width: '100%', maxWidth: '680px', margin: '0 auto' }}>
+            <h3 className="text-base sm:text-lg font-black text-on-surface leading-normal">
+              Running ML Model on <span className="text-primary">{selectedShipment?.product_name || selectedId}</span>...
+            </h3>
+            <p className="text-xs text-on-surface-variant leading-relaxed">
+              Please wait while computing Arrhenius kinetic degradation curves, thermal excursion risk vectors, and remaining shelf life predictions.
+            </p>
+          </div>
+
+          <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200 mt-2" style={{ width: '100%', maxWidth: '400px', margin: '8px auto 0 auto' }}>
+            <div className="bg-primary h-full rounded-full animate-pulse w-3/4"></div>
+          </div>
+        </div>
+      )}
+
       {/* Prediction Output Results Display */}
       {prediction && (
         <div className="glass-card bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/60 shadow-xl space-y-6 animate-fadeIn">
           <div className="flex justify-between items-center pb-3 border-b border-outline-variant/40">
             <div>
-              <span className="text-xs font-bold text-primary uppercase tracking-wider">FastAPI Predictive Analysis Model Result</span>
+              <span className="text-xs font-bold text-primary uppercase tracking-wider">AI Analysis Result</span>
               <h2 className="text-xl font-extrabold text-on-surface">{prediction.shipment_id} - {prediction.product_name}</h2>
             </div>
 

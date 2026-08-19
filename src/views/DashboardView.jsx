@@ -11,6 +11,7 @@ export default function DashboardView({ onSelectShipment, onNavigate }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isSimulating, setIsSimulating] = useState(true);
+  const [actionMessage, setActionMessage] = useState('');
 
   const fetchDashboard = async () => {
     try {
@@ -83,24 +84,84 @@ export default function DashboardView({ onSelectShipment, onNavigate }) {
     );
   }
 
-  const { kpis, status_distribution, spoilage_risk_distribution, product_categories_distribution, recent_alerts, recent_shipments, ai_recommendations } = data;
+  const kpis = data?.kpis || {};
+  const status_distribution = data?.status_distribution || [];
+  const spoilage_risk_distribution = data?.spoilage_risk_distribution || [];
+  const product_categories_distribution = data?.product_categories_distribution || [];
+  const recent_alerts = data?.recent_alerts || [];
+  const recent_shipments = data?.recent_shipments || [];
+  const ai_recommendations = data?.ai_recommendations || [];
+
+  const handleSeedFleet = async () => {
+    try {
+      setActionMessage('Adding 6 inbound cargo entries...');
+      const res = await apiService.seedDynamicFleet(6);
+      setActionMessage(res.message || 'Added 6 cargo entries to fleet.');
+      await fetchDashboard();
+      setTimeout(() => setActionMessage(''), 4000);
+    } catch (err) {
+      console.error('Seed fleet error:', err);
+      setActionMessage('Failed to add cargo entries.');
+    }
+  };
+
+  const handleTrimFleet = async () => {
+    try {
+      setActionMessage('Clearing 6 completed shipments...');
+      const res = await apiService.trimFleet(6);
+      setActionMessage(res.message || 'Cleared 6 completed shipments.');
+      await fetchDashboard();
+      setTimeout(() => setActionMessage(''), 4000);
+    } catch (err) {
+      console.error('Trim fleet error:', err);
+      setActionMessage('Failed to clear completed shipments.');
+    }
+  };
 
   return (
     <div className="space-y-6">
+      {/* Toast Notification Banner */}
+      {actionMessage && (
+        <div className="px-4 py-2.5 bg-primary/10 border border-primary/30 rounded-xl text-xs font-bold text-primary flex items-center gap-2 shadow-sm animate-pulse">
+          <span className="material-symbols-outlined text-[18px]">info</span>
+          <span>{actionMessage}</span>
+        </div>
+      )}
+
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/60 shadow-sm gap-4">
+
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-extrabold text-on-surface">Global Control Center</h1>
+            <h1 className="text-2xl font-extrabold text-on-surface">Control Center</h1>
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold border border-emerald-300 flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-              Live FastAPI Backend Connected
+              Backend Connected
             </span>
           </div>
-          <p className="text-xs text-on-surface-variant mt-1">Real-time thermal degradation telemetry & automated risk mitigation.</p>
+          <p className="text-xs text-on-surface-variant mt-1">Real-time temperature monitoring & risk prevention.</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            onClick={handleSeedFleet}
+            className="flex items-center gap-1.5 px-3 py-2 bg-primary/10 hover:bg-primary/20 rounded-xl text-xs font-bold text-primary border border-primary/30 transition-all shadow-sm cursor-pointer"
+            title="Add 6 new inbound cargo entries into active fleet"
+          >
+            <span className="material-symbols-outlined text-[18px]">add_box</span>
+            Add Cargo (+6)
+          </button>
+
+          <button
+            onClick={handleTrimFleet}
+            className="flex items-center gap-1.5 px-3 py-2 bg-red-50 hover:bg-red-100 rounded-xl text-xs font-bold text-red-700 border border-red-200 transition-all shadow-sm cursor-pointer"
+            title="Clear completed cargo shipments from active fleet"
+          >
+            <span className="material-symbols-outlined text-[18px]">cleaning_services</span>
+            Clear Completed (-6)
+          </button>
+
+
           <button
             onClick={() => setIsSimulating(!isSimulating)}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
@@ -112,55 +173,48 @@ export default function DashboardView({ onSelectShipment, onNavigate }) {
             <span className="material-symbols-outlined text-[18px]">
               {isSimulating ? 'sensors' : 'sensors_off'}
             </span>
-            {isSimulating ? 'Live IoT Stream: ACTIVE (5s)' : 'Start Live IoT Stream'}
-          </button>
-
-          <button
-            onClick={fetchDashboard}
-            className="flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-container rounded-xl text-xs font-bold text-on-surface border border-outline-variant transition-all"
-          >
-            <span className="material-symbols-outlined text-[18px]">refresh</span>
-            Refresh Ingestion Stream
+            {isSimulating ? 'Live Updates: Active' : 'Start Live Updates'}
           </button>
         </div>
       </div>
+
 
 
       {/* Dynamic KPI Cards Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
         <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm text-center">
           <p className="text-[11px] font-label-md text-on-surface-variant">Total Shipments</p>
-          <p className="text-xl font-extrabold text-on-surface mt-1">{kpis.total_shipments}</p>
+          <p className="text-xl font-extrabold text-on-surface mt-1">{kpis.total_shipments ?? 0}</p>
         </div>
 
         <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm text-center">
           <p className="text-[11px] font-label-md text-on-surface-variant">Active Monitored</p>
-          <p className="text-xl font-extrabold text-primary mt-1">{kpis.active_shipments}</p>
+          <p className="text-xl font-extrabold text-primary mt-1">{kpis.active_shipments ?? 0}</p>
         </div>
 
         <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm text-center">
           <p className="text-[11px] font-label-md text-on-surface-variant">Delivered</p>
-          <p className="text-xl font-extrabold text-emerald-600 mt-1">{kpis.delivered_shipments}</p>
+          <p className="text-xl font-extrabold text-emerald-600 mt-1">{kpis.delivered_shipments ?? 0}</p>
         </div>
 
         <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm text-center">
           <p className="text-[11px] font-label-md text-on-surface-variant">High Risk</p>
-          <p className="text-xl font-extrabold text-red-600 mt-1">{kpis.high_risk_shipments}</p>
+          <p className="text-xl font-extrabold text-red-600 mt-1">{kpis.high_risk_shipments ?? 0}</p>
         </div>
 
         <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm text-center">
           <p className="text-[11px] font-label-md text-on-surface-variant">Products Saved</p>
-          <p className="text-xl font-extrabold text-emerald-700 mt-1">{kpis.products_saved_units.toLocaleString()}</p>
+          <p className="text-xl font-extrabold text-emerald-700 mt-1">{(kpis.products_saved_units ?? 0).toLocaleString()}</p>
         </div>
 
         <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm text-center">
           <p className="text-[11px] font-label-md text-on-surface-variant">Loss Prevented</p>
-          <p className="text-xl font-extrabold text-primary mt-1">${(kpis.estimated_loss_prevented_usd / 1000).toFixed(1)}k</p>
+          <p className="text-xl font-extrabold text-primary mt-1">${(((kpis.estimated_loss_prevented_usd ?? 0) / 1000)).toFixed(1)}k</p>
         </div>
 
         <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-sm text-center col-span-2 sm:col-span-1">
           <p className="text-[11px] font-label-md text-on-surface-variant">Carbon Saved</p>
-          <p className="text-xl font-extrabold text-teal-600 mt-1">{kpis.carbon_saved_kg} kg</p>
+          <p className="text-xl font-extrabold text-teal-600 mt-1">{kpis.carbon_saved_kg ?? 0} kg</p>
         </div>
       </div>
 

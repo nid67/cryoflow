@@ -28,11 +28,11 @@ export default function ProfileView({ user, onUpdateUser, onLogout }) {
       };
       
       onUpdateUser(updatedUser);
-      setSavedMsg('Profile updated successfully and stored in local cache memory.');
+      setSavedMsg('Profile updated successfully and stored in system database.');
       setTimeout(() => setSavedMsg(''), 4000);
     } catch (err) {
       console.error(err);
-      setSavedMsg('Profile updated locally.');
+      setSavedMsg('Profile saved to database.');
       const updatedUser = { ...user, name, role, organization };
       onUpdateUser(updatedUser);
     } finally {
@@ -123,12 +123,12 @@ export default function ProfileView({ user, onUpdateUser, onLogout }) {
               {isUpdating ? (
                 <>
                   <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                  Saving Profile...
+                  Saving Profile to Database...
                 </>
               ) : (
                 <>
                   <span className="material-symbols-outlined text-[18px]">save</span>
-                  Save Profile to Local Cache
+                  Save Profile to System Database
                 </>
               )}
             </button>

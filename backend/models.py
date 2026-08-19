@@ -58,10 +58,16 @@ class Shipment:
     latest_recommendation: str = "Parameters normal. Maintain current thermal envelope."
     requires_decision: bool = False
     assigned_warehouse_id: Optional[str] = None
-    
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+
     temp_history: List[Dict[str, Any]] = field(default_factory=list)
     status_timeline: List[Dict[str, Any]] = field(default_factory=list)
     created_at: datetime = field(default_factory=datetime.utcnow)
+
+
+
 
 @dataclass
 class Warehouse:

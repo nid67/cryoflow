@@ -54,11 +54,23 @@ class SupabaseRepository:
 
     def _seed_default_data(self):
         warehouses_data = [
-            Warehouse(id="wh-delhi", code="DEL-HUB-01", name="Delhi Air Cargo Cold Hub", location="Delhi", total_capacity_pallets=500, used_capacity_pallets=320, min_temp_celsius=-80.0, max_temp_celsius=10.0, status="Active", manager="Rajesh Kumar"),
-            Warehouse(id="wh-mumbai", code="BOM-HUB-02", name="Mumbai JNPT Cold Logistics", location="Mumbai", total_capacity_pallets=800, used_capacity_pallets=650, min_temp_celsius=1.0, max_temp_celsius=8.0, status="Active", manager="Priya Sharma"),
-            Warehouse(id="wh-bangalore", code="BLR-HUB-03", name="Bangalore Biologics Hub", location="Bangalore", total_capacity_pallets=400, used_capacity_pallets=210, min_temp_celsius=-85.0, max_temp_celsius=4.0, status="Active", manager="Dr. Aris Thorne"),
-            Warehouse(id="wh-chennai", code="MAA-HUB-04", name="Chennai Port Freezer Terminal", location="Chennai", total_capacity_pallets=600, used_capacity_pallets=480, min_temp_celsius=-25.0, max_temp_celsius=10.0, status="Active", manager="K. Raman"),
-            Warehouse(id="wh-pune", code="PNQ-HUB-05", name="Pune Agro-Cold Facility", location="Pune", total_capacity_pallets=350, used_capacity_pallets=190, min_temp_celsius=0.0, max_temp_celsius=12.0, status="Active", manager="Amit Varma"),
+            Warehouse(id="wh-delhi", code="DEL-HUB-01", name="Delhi Air Cargo Cold Hub", location="Delhi", total_capacity_pallets=500, used_capacity_pallets=320, min_temp_celsius=-85.0, max_temp_celsius=10.0, status="Active", manager="Rajesh Kumar"),
+            Warehouse(id="wh-delhi-narela", code="DEL-HUB-02", name="Narela Pharma Storage Vault", location="Delhi", total_capacity_pallets=350, used_capacity_pallets=180, min_temp_celsius=-25.0, max_temp_celsius=8.0, status="Active", manager="Vikram Singh"),
+            Warehouse(id="wh-mumbai", code="BOM-HUB-01", name="Mumbai JNPT Cold Logistics", location="Mumbai", total_capacity_pallets=800, used_capacity_pallets=650, min_temp_celsius=-25.0, max_temp_celsius=8.0, status="Active", manager="Priya Sharma"),
+            Warehouse(id="wh-mumbai-navi", code="BOM-HUB-02", name="Navi Mumbai Biologics Vault", location="Mumbai", total_capacity_pallets=450, used_capacity_pallets=220, min_temp_celsius=-85.0, max_temp_celsius=4.0, status="Active", manager="Sanjay Mehta"),
+            Warehouse(id="wh-bangalore", code="BLR-HUB-01", name="Bangalore Biologics & Cold Hub", location="Bengaluru", total_capacity_pallets=400, used_capacity_pallets=210, min_temp_celsius=-85.0, max_temp_celsius=4.0, status="Active", manager="Dr. Aris Thorne"),
+            Warehouse(id="wh-bangalore-whitefield", code="BLR-HUB-02", name="Whitefield Tech Cold Park", location="Bengaluru", total_capacity_pallets=600, used_capacity_pallets=390, min_temp_celsius=-25.0, max_temp_celsius=8.0, status="Active", manager="Kavitha Rao"),
+            Warehouse(id="wh-chennai", code="MAA-HUB-01", name="Chennai Port Freezer Terminal", location="Chennai", total_capacity_pallets=600, used_capacity_pallets=480, min_temp_celsius=-30.0, max_temp_celsius=10.0, status="Active", manager="K. Raman"),
+            Warehouse(id="wh-chennai-sri", code="MAA-HUB-02", name="Sriperumbudur Cold Depot", location="Chennai", total_capacity_pallets=400, used_capacity_pallets=210, min_temp_celsius=-20.0, max_temp_celsius=8.0, status="Active", manager="S. Natarajan"),
+            Warehouse(id="wh-pune", code="PNQ-HUB-01", name="Pune Agro-Cold Facility", location="Pune", total_capacity_pallets=350, used_capacity_pallets=190, min_temp_celsius=-22.0, max_temp_celsius=12.0, status="Active", manager="Amit Varma"),
+            Warehouse(id="wh-pune-chakan", code="PNQ-HUB-02", name="Chakan Biologics Vault", location="Pune", total_capacity_pallets=300, used_capacity_pallets=120, min_temp_celsius=-85.0, max_temp_celsius=6.0, status="Active", manager="Nilesh Kulkarni"),
+            Warehouse(id="wh-hyderabad", code="HYD-HUB-01", name="Hyderabad Vaccine Depot", location="Hyderabad", total_capacity_pallets=550, used_capacity_pallets=290, min_temp_celsius=-85.0, max_temp_celsius=8.0, status="Active", manager="Dr. S. Reddy"),
+            Warehouse(id="wh-kolkata", code="CCU-HUB-01", name="Kolkata Port Cold Facility", location="Kolkata", total_capacity_pallets=480, used_capacity_pallets=310, min_temp_celsius=-25.0, max_temp_celsius=8.0, status="Active", manager="Debabrata Roy"),
+            Warehouse(id="wh-ahmedabad", code="AMD-HUB-01", name="Ahmedabad Cold Logistics", location="Ahmedabad", total_capacity_pallets=420, used_capacity_pallets=240, min_temp_celsius=-22.0, max_temp_celsius=8.0, status="Active", manager="Harsh Patel"),
+            Warehouse(id="wh-lucknow", code="LKO-HUB-01", name="Lucknow Central Cold Depot", location="Lucknow", total_capacity_pallets=320, used_capacity_pallets=140, min_temp_celsius=-20.0, max_temp_celsius=8.0, status="Active", manager="Alok Yadav"),
+            Warehouse(id="wh-jaipur", code="JAI-HUB-01", name="Jaipur Agro-Cold Facility", location="Jaipur", total_capacity_pallets=280, used_capacity_pallets=110, min_temp_celsius=-15.0, max_temp_celsius=8.0, status="Active", manager="Mahesh Rathore"),
+            Warehouse(id="wh-chandigarh", code="IXC-HUB-01", name="Chandigarh Cold Corridor Depot", location="Chandigarh", total_capacity_pallets=360, used_capacity_pallets=160, min_temp_celsius=-25.0, max_temp_celsius=8.0, status="Active", manager="Gurpreet Singh"),
+            Warehouse(id="wh-kochi", code="COK-HUB-01", name="Kochi Marine & Cold Storage", location="Kochi", total_capacity_pallets=400, used_capacity_pallets=260, min_temp_celsius=-30.0, max_temp_celsius=8.0, status="Active", manager="Mathew Joseph"),
         ]
         for w in warehouses_data:
             self._local_warehouses[w.id] = w
@@ -383,11 +395,21 @@ class SupabaseRepository:
             del self._local_shipments[shipment_id]
         if self.client:
             try:
+                # Clean up child records first to avoid foreign key constraint blocks in Supabase
+                try: self.client.table("telemetry_logs").delete().eq("shipment_id", shipment_id).execute()
+                except Exception: pass
+                try: self.client.table("ai_predictions").delete().eq("shipment_id", shipment_id).execute()
+                except Exception: pass
+                try: self.client.table("alerts").delete().eq("shipment_id", shipment_id).execute()
+                except Exception: pass
+
                 res = self.client.table("shipments").delete().eq("id", shipment_id).execute()
-                return len(res.data) > 0
+                return True
             except Exception as e:
                 logger.warning(f"Supabase delete_shipment failed: {e}")
+                return False
         return True
+
 
     # Warehouse methods
     def get_warehouse(self, warehouse_id: str) -> Optional[Warehouse]:
@@ -530,5 +552,65 @@ class SupabaseRepository:
             except Exception as e:
                 logger.warning(f"Supabase save_prediction failed: {e}")
         return data
+
+    # User methods
+    def _map_to_user(self, data: dict) -> User:
+        return User(
+            id=str(data.get("id")),
+            email=data.get("email", ""),
+            name=data.get("name", "User"),
+            role=data.get("role", "Operator"),
+            organization=data.get("organization", "Cold Chain Logistics"),
+            hashed_password=data.get("hashed_password") or data.get("password") or "ColdChain2026!"
+        )
+
+    def _map_from_user(self, u: User) -> dict:
+        return {
+            "id": u.id,
+            "email": u.email,
+            "name": u.name,
+            "role": u.role,
+            "organization": u.organization,
+            "hashed_password": u.hashed_password
+        }
+
+    def get_user_by_email(self, email: str) -> Optional[User]:
+        if self.client:
+            try:
+                res = self.client.table("users").select("*").eq("email", email).execute()
+                if res.data:
+                    u = self._map_to_user(res.data[0])
+                    self.users[u.email] = u
+                    self.users[u.id] = u
+                    return u
+            except Exception as e:
+                logger.warning(f"Supabase get_user_by_email failed: {e}")
+        return self.users.get(email)
+
+    def get_user_by_id(self, user_id: str) -> Optional[User]:
+        if self.client:
+            try:
+                res = self.client.table("users").select("*").eq("id", user_id).execute()
+                if res.data:
+                    u = self._map_to_user(res.data[0])
+                    self.users[u.email] = u
+                    self.users[u.id] = u
+                    return u
+            except Exception as e:
+                logger.warning(f"Supabase get_user_by_id failed: {e}")
+        return self.users.get(user_id)
+
+    def save_user(self, user: User) -> User:
+        self.users[user.email] = user
+        self.users[user.id] = user
+        if self.client:
+            try:
+                data = self._map_from_user(user)
+                res = self.client.table("users").upsert(data).execute()
+                if res.data:
+                    return self._map_to_user(res.data[0])
+            except Exception as e:
+                logger.warning(f"Supabase save_user failed: {e}")
+        return user
 
 db_repository = SupabaseRepository()

@@ -96,10 +96,23 @@ def alert_to_response(a) -> AlertResponse:
 # --- 1. Authentication & Profile Endpoints ---
 @app.post("/api/v1/auth/login", response_model=LoginResponse)
 def login(req: LoginRequest):
-    user = db_repository.users.get("usr-1")
-    if req.email == user.email and req.password in ["ColdChain2026!", "••••••••••••", "password", "admin"]:
+    user = db_repository.get_user_by_email(req.email)
+    if not user:
+        # Register new user in DB if logging in for first time
+        user = User(
+            id=f"usr-{uuid.uuid4().hex[:6]}",
+            email=req.email,
+            name=req.email.split("@")[0].capitalize(),
+            role="Operations Manager",
+            organization="Cold Chain Logistics",
+            hashed_password=req.password
+        )
+        db_repository.save_user(user)
+
+    # Validate password
+    if req.password == user.hashed_password or req.password in ["ColdChain2026!", "••••••••••••", "password", "admin"]:
         return LoginResponse(
-            access_token="cryoflow-jwt-valid-token-hackathon-2026",
+            access_token="cryoflow-jwt-valid-token-2026",
             user={
                 "id": user.id,
                 "email": user.email,
@@ -111,8 +124,10 @@ def login(req: LoginRequest):
     raise HTTPException(status_code=401, detail="Invalid corporate credentials.")
 
 @app.get("/api/v1/profile")
-def get_profile():
-    user = db_repository.users.get("usr-1")
+def get_profile(email: Optional[str] = None):
+    user = db_repository.get_user_by_email(email) if email else None
+    if not user:
+        user = db_repository.get_user_by_email("usr-1") or list(db_repository.users.values())[0]
     return {
         "id": user.id,
         "email": user.email,
@@ -122,17 +137,23 @@ def get_profile():
     }
 
 @app.put("/api/v1/profile")
-def update_profile(req: ProfileUpdateRequest):
-    user = db_repository.users.get("usr-1")
+def update_profile(req: ProfileUpdateRequest, email: Optional[str] = None):
+    user = db_repository.get_user_by_email(email) if email else None
+    if not user:
+        user = list(db_repository.users.values())[0]
     user.name = req.name
     user.role = req.role
     user.organization = req.organization
-    return {"message": "Profile updated successfully.", "user": get_profile()}
+    db_repository.save_user(user)
+    return {"message": "Profile updated successfully.", "user": get_profile(user.email)}
 
 @app.put("/api/v1/profile/password")
-def change_password(req: ChangePasswordRequest):
-    user = db_repository.users.get("usr-1")
+def change_password(req: ChangePasswordRequest, email: Optional[str] = None):
+    user = db_repository.get_user_by_email(email) if email else None
+    if not user:
+        user = list(db_repository.users.values())[0]
     user.hashed_password = req.new_password
+    db_repository.save_user(user)
     return {"message": "Password updated successfully."}
 
 # --- 2. Shipments Module Endpoints (CRUD) ---
@@ -272,17 +293,27 @@ def trigger_simulator_tick():
     from backend.models import Alert
     shipments = db_repository.list_shipments()
     updated = 0
+    
+    DEST_COORDS = {
+        "Mumbai": (19.0760, 72.8777),
+        "Chennai": (13.0827, 80.2707),
+        "Bangalore": (12.9716, 77.5946),
+        "Delhi": (28.6139, 77.2090),
+        "Lucknow": (26.8467, 80.9462)
+    }
+
     for s in shipments:
         if s.current_status in ["In Transit", "Warning"]:
-            temp_delta = round(random.uniform(-0.4, 0.6), 1)
+            # Realistic sensor temperature stability noise (±0.1°C)
+            temp_delta = round(random.uniform(-0.1, 0.1), 1)
             new_temp = round(s.current_temp + temp_delta, 1)
 
             metrics = ShipmentService.calculate_health_and_risk(
-                s.product_category, new_temp, s.transit_time_hours + 0.5, s.shipment_value
+                s.product_category, new_temp, s.transit_time_hours + 0.1, s.shipment_value
             )
 
             s.current_temp = new_temp
-            s.transit_time_hours += 0.5
+            s.transit_time_hours += 0.1
             s.spoilage_risk = metrics["spoilage_risk"]
             s.health_score = metrics["health_score"]
             s.remaining_shelf_life_days = metrics["remaining_shelf_life_days"]
@@ -290,6 +321,14 @@ def trigger_simulator_tick():
             s.estimated_carbon_impact_kg = metrics["carbon_impact_kg"]
             s.latest_recommendation = metrics["recommendation"]
             s.requires_decision = metrics["requires_decision"]
+
+            # Move vehicle GPS coordinates dynamically along route
+            if s.destination in DEST_COORDS:
+                target_lat, target_lon = DEST_COORDS[s.destination]
+                if getattr(s, 'latitude', None) is None: s.latitude = target_lat - 1.2
+                if getattr(s, 'longitude', None) is None: s.longitude = target_lon - 1.2
+                s.latitude = round(s.latitude + (target_lat - s.latitude) * 0.02, 6)
+                s.longitude = round(s.longitude + (target_lon - s.longitude) * 0.02, 6)
 
             if metrics["spoilage_risk"] > 50.0 and s.current_status != "Critical Breach":
                 s.current_status = "Critical Breach"
@@ -307,6 +346,8 @@ def trigger_simulator_tick():
                 db_repository.save_alert(alert)
             elif metrics["spoilage_risk"] > 25.0 and s.current_status == "In Transit":
                 s.current_status = "Warning"
+            elif metrics["spoilage_risk"] < 15.0 and s.current_status == "Warning":
+                s.current_status = "In Transit"
 
             new_history_entry = {
                 "time": datetime.now(timezone.utc).strftime("%H:%M"),
@@ -325,4 +366,92 @@ def trigger_simulator_tick():
         "message": f"Simulator tick executed. Updated {updated} active shipments.",
         "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     }
+
+# --- 9. Dynamic Fleet Injection Endpoint ---
+@app.post("/api/v1/simulator/seed-fleet")
+def seed_dynamic_fleet(num_shipments: int = Query(default=6, ge=1, le=50)):
+    """
+    Dynamically generates and injects fresh synthetic cold chain shipments into the active fleet using ColdChainSyntheticEngine.
+    """
+    try:
+        from scripts.generate_synthetic_telemetry import ColdChainSyntheticEngine
+        from backend.models import Shipment
+        engine = ColdChainSyntheticEngine()
+        batch = engine.generate_batch(num_shipments=num_shipments)
+
+        added_count = 0
+        for record in batch:
+            last_tel = record.telemetry_logs[-1] if record.telemetry_logs else None
+            clean_id = record.id if (record.id and record.id.startswith("CRY-")) else f"CRY-{random.randint(1000, 9999)}"
+            s = Shipment(
+                id=clean_id,
+                tracking_number=record.tracking_number,
+                product_category=record.product_category,
+                product_name=record.product_name,
+                quantity=record.quantity,
+                shipment_value=record.shipment_value,
+                origin=record.origin,
+                destination=record.destination,
+                current_location=record.current_location,
+                current_temp=record.current_temperature,
+                humidity=record.humidity,
+                transit_time_hours=record.transit_time_hours,
+                estimated_arrival=record.estimated_arrival,
+                vehicle_number=record.vehicle_number,
+                current_status=record.current_status,
+                notes=record.notes,
+                spoilage_risk=record.spoilage_risk,
+                health_score=record.health_score,
+                remaining_shelf_life_days=record.remaining_shelf_life_days,
+                estimated_financial_loss=record.estimated_financial_loss,
+                estimated_carbon_impact_kg=record.estimated_carbon_impact_kg,
+                latest_recommendation=record.recommendation,
+                requires_decision=record.requires_decision,
+                assigned_warehouse_id=record.warehouse_id,
+                latitude=last_tel.latitude if last_tel else None,
+                longitude=last_tel.longitude if last_tel else None,
+                temp_history=[{"time": t.recorded_at[-9:-4], "temp": t.temperature, "min_limit": 2, "max_limit": 8} for t in record.telemetry_logs[:5]],
+                status_timeline=[{"timestamp": record.created_at, "status": "Dispatched", "location": record.origin, "note": "Inbound shipment manifest registered."}]
+            )
+            db_repository.save_shipment(s)
+            added_count += 1
+
+        return {
+            "message": f"Added {added_count} cargo entries to fleet.",
+            "total_fleet": len(db_repository.list_shipments())
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# --- 10. Trim Fleet Endpoint ---
+@app.post("/api/v1/simulator/trim-fleet")
+def trim_fleet(num_shipments: int = Query(default=6, ge=1, le=50)):
+    """
+    Reduces active shipment fleet by deleting shipments from database / Supabase and local memory.
+    Prioritizes Delivered, Liquidated, or oldest shipments.
+    """
+    shipments = db_repository.list_shipments()
+    if not shipments:
+        return {"message": "Fleet is already empty.", "total_fleet": 0}
+
+    to_delete = [s for s in shipments if s.current_status in ["Delivered", "Liquidated"]]
+    remaining_needed = num_shipments - len(to_delete)
+
+    if remaining_needed > 0:
+        others = [s for s in shipments if s.current_status not in ["Delivered", "Liquidated"]]
+        to_delete.extend(others[:remaining_needed])
+
+    removed_count = 0
+    for s in to_delete[:num_shipments]:
+        success = db_repository.delete_shipment(s.id)
+        if success:
+            removed_count += 1
+
+    return {
+        "message": f"Cleared {removed_count} completed shipments.",
+        "total_fleet": len(db_repository.list_shipments())
+    }
+
+
+
 

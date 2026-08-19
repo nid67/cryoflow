@@ -219,58 +219,95 @@ class DecisionService:
         return history_shipments
 
     @staticmethod
+    def get_nearest_hub_for_location(location: str, destination: str) -> tuple:
+        """Returns (warehouse_id, warehouse_name, warehouse_location) based on shipment location."""
+        loc = (str(location or "") + " " + str(destination or "")).lower()
+        if any(c in loc for c in ["bengaluru", "bangalore", "pune", "anantapur"]):
+            return ("wh-bangalore", "Bangalore Biologics & Cold Hub", "Bangalore")
+        elif any(c in loc for c in ["mumbai", "surat", "ahmedabad"]):
+            return ("wh-mumbai", "Mumbai JNPT Cold Logistics", "Mumbai")
+        elif any(c in loc for c in ["delhi", "patna", "ambala", "chandigarh", "agra"]):
+            return ("wh-delhi", "Delhi Air Cargo Cold Hub", "Delhi")
+        elif any(c in loc for c in ["chennai", "kochi"]):
+            return ("wh-chennai", "Chennai Port Freezer Terminal", "Chennai")
+        return ("wh-pune", "Pune Agro-Cold Facility", "Pune")
+
+    @staticmethod
     def execute_decision_action(shipment_id: str, action: str, notes: str = "") -> Optional[Shipment]:
         shipment = db_repository.get_shipment(shipment_id)
         if not shipment:
             return None
 
         timestamp_now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+        loc = shipment.current_location or shipment.origin or "Current Checkpoint"
+        dest = shipment.destination or "Destination Hub"
+        product = shipment.product_name or "Cargo"
+        val_recovered = round(shipment.shipment_value * 0.75, 2)
 
-        if action == "Continue Delivery":
+        wh_id, wh_name, wh_loc = DecisionService.get_nearest_hub_for_location(loc, dest)
+        clean_notes = f" Note: {notes}" if notes else ""
+
+        if action in ["Continue Delivery", "Continue"]:
             shipment.current_status = "In Transit"
-            shipment.spoilage_risk = max(1.0, shipment.spoilage_risk * 0.3)
-            shipment.health_score = min(99.0, shipment.health_score + 25.0)
+            shipment.spoilage_risk = max(1.0, round(shipment.spoilage_risk * 0.3, 1))
+            shipment.health_score = min(99.0, round(shipment.health_score + 25.0, 1))
             shipment.requires_decision = False
-            shipment.latest_recommendation = f"ACTION EXECUTED: Continued standard delivery path under priority monitoring. {notes}".strip()
+            shipment.latest_recommendation = (
+                f"ACTION EXECUTED: Continued standard route for shipment {shipment_id} ({product}) currently at {loc}. "
+                f"Cargo proceeding to destination {dest}. Active telemetry monitoring engaged and driver requested to inspect door seals.{clean_notes}"
+            ).strip()
 
-        elif action == "Re-route":
+        elif action in ["Re-route", "Re-route Cargo"]:
             shipment.current_status = "Re-routed"
-            shipment.current_location = "Redirected to Chicago Central Cold Hub"
+            shipment.current_location = f"Re-routed via {loc} Express Bypass Corridor → {dest}"
             shipment.spoilage_risk = 2.5
             shipment.health_score = 96.0
             shipment.requires_decision = False
-            shipment.assigned_warehouse_id = "WH-102"
-            shipment.latest_recommendation = f"ACTION EXECUTED: Rerouted to Chicago Central Cold Hub. {notes}".strip()
+            shipment.assigned_warehouse_id = wh_id
+            shipment.latest_recommendation = (
+                f"ACTION EXECUTED: Shipment {shipment_id} ({product}) currently at {loc} re-routed to destination {dest} "
+                f"via alternative express cold corridor bypassing traffic congestion, saving ~3.5h transit time.{clean_notes}"
+            ).strip()
 
-        elif action == "Nearest Warehouse":
+        elif action in ["Nearest Warehouse", "Nearest Hub", "Send to Nearest Hub"]:
             shipment.current_status = "Re-routed"
-            shipment.current_location = "Redirected to Frankfurt Cold Hub"
+            shipment.current_location = f"Diverted to {wh_name} ({wh_loc})"
             shipment.spoilage_risk = 1.8
             shipment.health_score = 97.5
             shipment.requires_decision = False
-            shipment.assigned_warehouse_id = "WH-101"
-            shipment.latest_recommendation = f"ACTION EXECUTED: Emergency diversion to nearest warehouse (WH-101). {notes}".strip()
+            shipment.assigned_warehouse_id = wh_id
+            shipment.latest_recommendation = (
+                f"ACTION EXECUTED: Emergency cold storage diversion for shipment {shipment_id} ({product}) currently at {loc}. "
+                f"Diverted to nearest facility {wh_name} ({wh_loc}) for immediate pallet offloading and temperature stabilization.{clean_notes}"
+            ).strip()
 
-        elif action == "Priority Delivery":
+        elif action in ["Priority Delivery", "Priority Express", "Priority Shipping"]:
             shipment.current_status = "In Transit"
             shipment.spoilage_risk = 5.0
             shipment.health_score = 94.0
             shipment.requires_decision = False
-            shipment.latest_recommendation = f"ACTION EXECUTED: Priority express lane speed override engaged. {notes}".strip()
+            shipment.latest_recommendation = (
+                f"ACTION EXECUTED: Priority Express Protocol engaged for shipment {shipment_id} ({product}) currently at {loc}. "
+                f"Vehicle cooling compressor set to maximum boost and driver assigned express highway toll corridor to {dest}, cutting arrival ETA by 4 hours.{clean_notes}"
+            ).strip()
 
-        elif action == "Secondary Marketplace":
+        elif action in ["Secondary Marketplace", "Liquidate", "Liquidate Stock"]:
             shipment.current_status = "Liquidated"
+            shipment.current_location = f"Liquidated at {loc} Secondary Market Exchange"
             shipment.spoilage_risk = 0.0
             shipment.health_score = 80.0
             shipment.requires_decision = False
-            shipment.latest_recommendation = f"ACTION EXECUTED: Batch liquidated to secondary grocery market to prevent total financial write-off. {notes}".strip()
+            shipment.latest_recommendation = (
+                f"ACTION EXECUTED: Shipment {shipment_id} ({product}) currently at {loc} liquidated to local secondary grocery exchange in {loc}. "
+                f"Prevents total thermal spoilage write-off and recovers ${val_recovered:,.2f} of cargo value.{clean_notes}"
+            ).strip()
 
         # Update timeline
         shipment.status_timeline.append({
             "timestamp": timestamp_now,
             "status": shipment.current_status,
             "location": shipment.current_location,
-            "note": f"Decision Center Action: '{action}' executed successfully."
+            "note": shipment.latest_recommendation
         })
 
         db_repository.save_shipment(shipment)

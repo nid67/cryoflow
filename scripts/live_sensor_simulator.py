@@ -56,8 +56,10 @@ except ImportError:
 # 1. ENVIRONMENT & INTERVAL CONFIGURATION
 # ==============================================================================
 
-# Default production interval is strictly 1 HOUR (3600 seconds)
-DEFAULT_INTERVAL_SECONDS = 3600
+# Testing interval set to 1 MINUTE (60 seconds)
+DEFAULT_INTERVAL_SECONDS = 60
+
+
 
 def get_configured_interval(args_interval: Optional[int] = None, is_demo: bool = False) -> int:
     """
@@ -454,10 +456,17 @@ class LiveColdChainSimulator:
                     print(f"[SIMULATOR] Telemetry inserted successfully for {tracking_num}")
                 except Exception as e:
                     print(f"[SIMULATOR] Supabase insertion error for {tracking_num}: {e}")
-            else:
-                print(f"[SIMULATOR] Telemetry inserted successfully (Local Simulation)")
+            elif not self.dry_run:
+                try:
+                    import urllib.request
+                    req = urllib.request.Request("http://127.0.0.1:8000/api/v1/simulator/tick", method="POST")
+                    with urllib.request.urlopen(req) as resp:
+                        print(f"[SIMULATOR] Telemetry cycle posted to FastAPI REST Backend: {resp.read().decode()}")
+                except Exception as e:
+                    print(f"[SIMULATOR] Telemetry generated locally for {tracking_num}")
 
         print(f"[SIMULATOR] Next sensor cycle in {format_duration(interval_seconds)}")
+
 
     def run_continuous(self, interval_seconds: int, max_cycles: Optional[int] = None):
         """

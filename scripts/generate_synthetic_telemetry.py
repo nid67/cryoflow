@@ -353,8 +353,8 @@ class ColdChainSyntheticEngine:
         product_cfg = random.choice(PRODUCT_CATALOG[category])
         route = random.choice(ROUTES_DATABASE)
         
-        shipment_id = str(uuid.uuid4())
-        tracking_num = f"CRY-{random.randint(1000, 9999)}"
+        shipment_id = f"CRY-{random.randint(1000, 9999)}"
+        tracking_num = f"DL-COLD-{random.randint(1000, 9999)}"
         warehouse = random.choice(WAREHOUSE_SEEDS)
 
         quantity = random.randint(product_cfg["min_qty"], product_cfg["max_qty"])

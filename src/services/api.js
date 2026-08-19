@@ -5,7 +5,7 @@
  */
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -109,10 +109,20 @@ export const apiService = {
     return res.data;
   },
 
-  // Live Simulator
+  // Live Simulator & Dynamic Generator
   triggerSimulatorTick: async () => {
     const res = await apiClient.post('/simulator/tick');
     return res.data;
+  },
+  seedDynamicFleet: async (num_shipments = 6) => {
+    const res = await apiClient.post('/simulator/seed-fleet', null, { params: { num_shipments } });
+    return res.data;
+  },
+  trimFleet: async (num_shipments = 6) => {
+    const res = await apiClient.post('/simulator/trim-fleet', null, { params: { num_shipments } });
+    return res.data;
   }
 };
+
+
 

@@ -35,18 +35,18 @@ export default function AlertsView() {
       <div className="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/60 shadow-sm space-y-2">
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-red-600 text-[28px]">notifications_active</span>
-          <h1 className="text-2xl font-extrabold text-on-surface">Automated Alert Feed</h1>
+          <h1 className="text-2xl font-extrabold text-on-surface">Alert Center</h1>
           <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-900 text-[11px] font-bold border border-blue-300">
-            Live Stream Connected
+            Live Stream
           </span>
         </div>
-        <p className="text-xs text-on-surface-variant">Real-time alerts triggered by FastAPI backend upon temperature breaches, delay risk thresholds, or warehouse capacity events.</p>
+        <p className="text-xs text-on-surface-variant">Real-time alerts for temperature breaches, risk thresholds, or warehouse capacity events.</p>
       </div>
 
-      {/* Feature Roadmap Card */}
+      {/* Notification Info Card */}
       <div className="bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-2 text-xs">
-        <span className="font-bold text-cyan-400 uppercase tracking-wider block">Planned Notification Integrations (Phase 2):</span>
-        <p className="text-slate-300">Automatic SMS dispatch via Twilio, Webhook payload forwarding, and Slack/Teams emergency incident channels.</p>
+        <span className="font-bold text-cyan-400 uppercase tracking-wider block">Notification Integrations:</span>
+        <p className="text-slate-300">Automatic SMS alerts, webhook notifications, and emergency team updates for temperature excursions.</p>
       </div>
 
       <div className="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/60 shadow-sm space-y-3">
