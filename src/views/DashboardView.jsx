@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { apiService } from '../services/api';
+import { supabase } from '../services/supabaseClient';
+import InteractiveMap from '../components/InteractiveMap';
 
 const COLORS = ['#0065FF', '#F59E0B', '#EF4444', '#10B981', '#8B5CF6'];
 
@@ -11,7 +13,6 @@ export default function DashboardView({ onSelectShipment, onNavigate }) {
 
   const fetchDashboard = async () => {
     try {
-      setLoading(true);
       const res = await apiService.getDashboardAnalytics();
       setData(res);
       setError('');
@@ -25,6 +26,24 @@ export default function DashboardView({ onSelectShipment, onNavigate }) {
 
   useEffect(() => {
     fetchDashboard();
+
+    // Subscribe to telemetry_logs INSERT events
+    const channel = supabase
+      .channel('telemetry_logs_changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'telemetry_logs' },
+        (payload) => {
+          console.log('New telemetry record received:', payload);
+          // Re-fetch dashboard data to update temperature, health, risk, map position, alerts, KPIs
+          fetchDashboard();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   if (loading) {
@@ -110,6 +129,13 @@ export default function DashboardView({ onSelectShipment, onNavigate }) {
           <p className="text-xl font-extrabold text-teal-600 mt-1">{kpis.carbon_saved_kg} kg</p>
         </div>
       </div>
+
+      {/* Interactive Map Section */}
+      <InteractiveMap
+        shipments={recent_shipments}
+        selectedShipmentId={null}
+        onSelectShipment={onSelectShipment}
+      />
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

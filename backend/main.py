@@ -37,6 +37,7 @@ app.add_middleware(
 def shipment_to_response(s) -> ShipmentResponse:
     return ShipmentResponse(
         id=s.id,
+        tracking_number=s.tracking_number,
         product_category=s.product_category,
         product_name=s.product_name,
         quantity=s.quantity,
@@ -61,12 +62,13 @@ def shipment_to_response(s) -> ShipmentResponse:
         assigned_warehouse_id=s.assigned_warehouse_id,
         temp_history=s.temp_history,
         status_timeline=s.status_timeline,
-        created_at=s.created_at.strftime("%Y-%m-%d %H:%M UTC")
+        created_at=s.created_at.strftime("%Y-%m-%d %H:%M UTC") if isinstance(s.created_at, datetime) else s.created_at
     )
 
 def warehouse_to_response(w) -> WarehouseResponse:
     return WarehouseResponse(
         id=w.id,
+        code=w.code,
         name=w.name,
         location=w.location,
         total_capacity_pallets=w.total_capacity_pallets,

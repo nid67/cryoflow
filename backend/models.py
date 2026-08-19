@@ -33,6 +33,7 @@ class StatusLog:
 @dataclass
 class Shipment:
     id: str
+    tracking_number: str
     product_category: str  # Vaccines, Dairy, Quick-Commerce Groceries
     product_name: str
     quantity: int
@@ -65,6 +66,7 @@ class Shipment:
 @dataclass
 class Warehouse:
     id: str
+    code: str
     name: str
     location: str
     total_capacity_pallets: int

@@ -277,8 +277,41 @@ function CandidateRow({ c, rank }) {
 }
 
 export default function WarehousesView() {
-  const [warehouses, setWarehouses] = useState(DEFAULT_WAREHOUSES);
-  const [loading, setLoading] = useState(false);
+  const [warehouses, setWarehouses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWarehouses = async () => {
+      try {
+        setLoading(true);
+        const res = await apiService.getWarehouses();
+        // Since backend doesn't provide zones, let's map them to UI format
+        const mapped = res.map(wh => ({
+          ...wh,
+          latitude: 0,
+          longitude: 0,
+          zones: [{
+            id: wh.id + '_z1',
+            zone_name: 'Main Storage',
+            min_temp_c: wh.min_temp_celsius,
+            max_temp_c: wh.max_temp_celsius,
+            pallet_capacity: wh.total_capacity_pallets,
+            pallets_occupied: wh.used_capacity_pallets,
+            available_capacity: wh.total_capacity_pallets - wh.used_capacity_pallets,
+            power_backup: true
+          }]
+        }));
+        // Merge with defaults to have cool cities with lat/lng if we want, or just replace
+        setWarehouses(mapped.length > 0 ? mapped : DEFAULT_WAREHOUSES);
+      } catch (err) {
+        console.error(err);
+        setWarehouses(DEFAULT_WAREHOUSES); // fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchWarehouses();
+  }, []);
   const [query, setQuery] = useState({
     lat: CITY_PRESETS[0].lat,
     lng: CITY_PRESETS[0].lng,

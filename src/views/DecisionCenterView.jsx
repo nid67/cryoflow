@@ -200,8 +200,8 @@ export default function DecisionCenterView({ onNavigateToDashboard, onNavigateTo
 
                     <div className="flex items-center gap-4 text-xs font-label-md">
                       <div>
-                        <span className="text-slate-400 block text-[10px]">Health Score</span>
-                        <span className="font-extrabold text-emerald-700 text-base">{s.health_score} / 100</span>
+                        <span className="text-slate-400 block text-[10px]">Estimated Loss</span>
+                        <span className="font-extrabold text-amber-600 text-base">${s.estimated_financial_loss?.toLocaleString() || 0}</span>
                       </div>
                       <div>
                         <span className="text-slate-400 block text-[10px]">Spoilage Risk</span>
@@ -212,6 +212,8 @@ export default function DecisionCenterView({ onNavigateToDashboard, onNavigateTo
 
                   {/* AI Recommendation Banner */}
                   <div className="bg-amber-500/10 p-3 rounded-xl border border-amber-500/30 text-xs">
+                    <span className="font-bold text-amber-900 block mb-0.5">Recommendation Reason:</span>
+                    <span className="text-on-surface mb-2 block text-[11px]">Risk thresholds exceeded due to thermal degradation vector. Action required to mitigate financial and product loss.</span>
                     <span className="font-bold text-amber-900 block mb-0.5">AI Prescriptive Recommendation:</span>
                     <span className="text-on-surface font-semibold">{s.latest_recommendation}</span>
                   </div>

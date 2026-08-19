@@ -59,6 +59,7 @@ class ShipmentUpdateRequest(BaseModel):
 
 class ShipmentResponse(BaseModel):
     id: str
+    tracking_number: str
     product_category: str
     product_name: str
     quantity: int
@@ -108,6 +109,7 @@ class WarehouseUpdateRequest(BaseModel):
 
 class WarehouseResponse(BaseModel):
     id: str
+    code: str
     name: str
     location: str
     total_capacity_pallets: int

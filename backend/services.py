@@ -13,61 +13,45 @@ from backend.schemas import (
     WarehouseCreateRequest, WarehouseUpdateRequest,
     ProfileUpdateRequest, ChangePasswordRequest
 )
+try:
+    from backend.risk_engine import DeterministicKineticRiskEngine, risk_service
+except ImportError:
+    from risk_engine import DeterministicKineticRiskEngine, risk_service
 
 class ShipmentService:
     @staticmethod
     def calculate_health_and_risk(category: str, temp: float, hours: float, value: float):
-        """Dynamic kinetic degradation model for Hackathon MVP."""
-        base_min, base_max = 2.0, 8.0
-        if category == "Vaccines":
-            if temp < -50.0:  # mRNA ultra-cold
-                base_min, base_max = -85.0, -70.0
-            else:
-                base_min, base_max = 2.0, 8.0
-        elif category == "Dairy":
-            base_min, base_max = 1.0, 4.0
-        elif category == "Quick-Commerce Groceries":
-            base_min, base_max = 0.5, 3.5
-
-        delta = 0.0
-        if temp > base_max:
-            delta = temp - base_max
-        elif temp < base_min:
-            delta = base_min - temp
-
-        if delta > 0:
-            spoilage_risk = min(99.9, max(5.0, (delta * 9.5) + (hours * 0.7)))
-        else:
-            spoilage_risk = max(0.5, hours * 0.08)
-
-        health_score = max(0.0, min(100.0, 100.0 - spoilage_risk))
-        remaining_shelf_life_days = max(0.0, round((100.0 - spoilage_risk) * 0.25, 1))
-        financial_loss = round(value * (spoilage_risk / 100.0), 2)
-        carbon_impact_kg = round((value / 1000.0) * (spoilage_risk / 100.0) * 12.5, 1)
-
-        requires_decision = spoilage_risk > 25.0
-        if spoilage_risk > 60.0:
-            recommendation = "CRITICAL BREACH: Immediately execute Re-route to nearest cold warehouse or Secondary Marketplace."
-        elif spoilage_risk > 25.0:
-            recommendation = "WARNING: Temperature excursion detected. Recommend compressor adjustment or Nearest Warehouse redirect."
-        else:
-            recommendation = "Parameters nominal. Maintain current thermal envelope."
+        """
+        Deterministic thermodynamic & kinetic degradation model calculation.
+        Evaluates spoilage risk %, health score, shelf life decay, financial loss,
+        and carbon footprint impact.
+        """
+        engine = DeterministicKineticRiskEngine()
+        result = engine.evaluate(
+            product_category=category,
+            product_name="Cargo",
+            current_temp=temp,
+            transit_time_hours=hours,
+            shipment_value=value
+        )
+        envelope = engine.get_product_envelope(category, temp)
 
         return {
-            "spoilage_risk": round(spoilage_risk, 1),
-            "health_score": round(health_score, 1),
-            "remaining_shelf_life_days": remaining_shelf_life_days,
-            "financial_loss": financial_loss,
-            "carbon_impact_kg": carbon_impact_kg,
-            "requires_decision": requires_decision,
-            "recommendation": recommendation,
-            "min_limit": base_min,
-            "max_limit": base_max
+            "spoilage_risk": result.spoilage_risk_percent,
+            "health_score": result.health_score,
+            "remaining_shelf_life_days": result.remaining_shelf_life_days,
+            "financial_loss": result.estimated_financial_loss_usd,
+            "carbon_impact_kg": result.estimated_carbon_impact_kg,
+            "requires_decision": result.requires_decision,
+            "recommendation": result.ai_recommendation,
+            "min_limit": envelope["min_temp"],
+            "max_limit": envelope["max_temp"]
         }
 
     @classmethod
     def create_shipment(cls, data: ShipmentCreateRequest) -> Shipment:
-        shipment_id = f"CRY-{uuid.uuid4().hex[:4].upper()}"
+        tracking_num = f"CRY-{uuid.uuid4().hex[:4].upper()}"
+        shipment_id = str(uuid.uuid4())
         metrics = cls.calculate_health_and_risk(
             data.product_category, data.current_temp, data.transit_time_hours, data.shipment_value
         )
@@ -82,6 +66,7 @@ class ShipmentService:
 
         shipment = Shipment(
             id=shipment_id,
+            tracking_number=tracking_num,
             product_category=data.product_category,
             product_name=data.product_name,
             quantity=data.quantity,
@@ -117,7 +102,7 @@ class ShipmentService:
         # Trigger automatic backend alert if risk is elevated
         if metrics["requires_decision"]:
             alert = Alert(
-                id=f"ALT-{uuid.uuid4().hex[:4].upper()}",
+                id=str(uuid.uuid4()),
                 shipment_id=shipment_id,
                 warehouse_id=None,
                 alert_type="Temperature Alert" if metrics["spoilage_risk"] > 50 else "Spoilage Alert",
@@ -177,10 +162,19 @@ class PredictionService:
 
         confidence_score = round(94.5 + (100.0 - metrics["spoilage_risk"]) * 0.05, 1)
 
-        return {
+        # Update shipment properties
+        shipment.spoilage_risk = metrics["spoilage_risk"]
+        shipment.health_score = metrics["health_score"]
+        shipment.remaining_shelf_life_days = metrics["remaining_shelf_life_days"]
+        shipment.estimated_financial_loss = metrics["financial_loss"]
+        shipment.estimated_carbon_impact_kg = metrics["carbon_impact_kg"]
+        shipment.latest_recommendation = metrics["recommendation"]
+        
+        # Save updated shipment
+        db_repository.save_shipment(shipment)
+
+        prediction_data = {
             "shipment_id": shipment.id,
-            "product_name": shipment.product_name,
-            "product_category": shipment.product_category,
             "current_temp": shipment.current_temp,
             "spoilage_risk_percent": metrics["spoilage_risk"],
             "remaining_shelf_life_days": metrics["remaining_shelf_life_days"],
@@ -190,6 +184,14 @@ class PredictionService:
             "confidence_score_percent": confidence_score,
             "ai_recommendation": metrics["recommendation"]
         }
+        
+        # Save to ai_predictions table
+        db_repository.save_prediction(prediction_data)
+
+        # Build response
+        prediction_data["product_name"] = shipment.product_name
+        prediction_data["product_category"] = shipment.product_category
+        return prediction_data
 
 class DecisionService:
     @staticmethod
@@ -198,13 +200,23 @@ class DecisionService:
 
     @staticmethod
     def get_executed_decision_history() -> List[Shipment]:
+        history_actions = db_repository.get_decision_history()
+        # Find unique shipment IDs that have executed actions
+        shipment_ids = list(set([h["shipment_id"] for h in history_actions if "shipment_id" in h]))
+        
+        history_shipments = []
+        for sid in shipment_ids:
+            shipment = db_repository.get_shipment(sid)
+            if shipment:
+                history_shipments.append(shipment)
+        
+        # Also include any that are currently Re-routed or Liquidated
         all_shipments = db_repository.list_shipments()
-        history = []
         for s in all_shipments:
-            has_action = any("ACTION EXECUTED" in st.get("note", "") for st in s.status_timeline)
-            if has_action or s.current_status in ["Re-routed", "Liquidated"]:
-                history.append(s)
-        return history
+            if s.current_status in ["Re-routed", "Liquidated"] and s not in history_shipments:
+                history_shipments.append(s)
+                
+        return history_shipments
 
     @staticmethod
     def execute_decision_action(shipment_id: str, action: str, notes: str = "") -> Optional[Shipment]:
@@ -262,6 +274,14 @@ class DecisionService:
         })
 
         db_repository.save_shipment(shipment)
+        
+        # Log to decision_actions table
+        db_repository.save_decision_action(
+            shipment_id=shipment.id, 
+            action=action, 
+            notes=notes, 
+            assigned_warehouse_id=shipment.assigned_warehouse_id
+        )
 
         # Automatically resolve related open alerts for this shipment
         for alert in db_repository.list_alerts():
@@ -274,9 +294,11 @@ class DecisionService:
 class WarehouseService:
     @staticmethod
     def create_warehouse(data: WarehouseCreateRequest) -> Warehouse:
-        wh_id = f"WH-{uuid.uuid4().hex[:3].upper()}"
+        wh_code = f"WH-{uuid.uuid4().hex[:3].upper()}"
+        wh_id = str(uuid.uuid4())
         wh = Warehouse(
             id=wh_id,
+            code=wh_code,
             name=data.name,
             location=data.location,
             total_capacity_pallets=data.total_capacity_pallets,
@@ -305,17 +327,9 @@ class AnalyticsService:
         shipments = db_repository.list_shipments()
         warehouses = db_repository.list_warehouses()
         alerts = db_repository.list_alerts()
+        kpis_db = db_repository.get_dashboard_kpis()
 
-        total_shipments = len(shipments)
-        active_shipments = len([s for s in shipments if s.current_status in ["In Transit", "Warning", "Critical Breach", "Re-routed"]])
-        delivered_shipments = len([s for s in shipments if s.current_status == "Delivered"])
-        high_risk_shipments = len([s for s in shipments if s.spoilage_risk > 25.0])
-        
-        products_saved_units = sum([s.quantity for s in shipments if s.current_status == "Delivered" or (s.spoilage_risk < 10.0 and s.current_status == "Re-routed")])
-        estimated_loss_prevented_usd = round(sum([s.shipment_value * 0.85 for s in shipments if s.health_score > 80.0]), 2)
-        carbon_saved_kg = round(sum([s.estimated_carbon_impact_kg * 8.5 for s in shipments if s.health_score > 80.0]), 1)
-
-        # Distribution charts
+        # Distribution charts based on fetched shipments
         status_counts = {}
         category_counts = {}
         risk_ranges = {"Low (<15%)": 0, "Medium (15-50%)": 0, "High (>50%)": 0}
@@ -339,7 +353,7 @@ class AnalyticsService:
                 "id": w.id,
                 "name": w.name,
                 "location": w.location,
-                "utilization_percent": round((w.used_capacity_pallets / w.total_capacity_pallets) * 100, 1),
+                "utilization_percent": round((w.used_capacity_pallets / w.total_capacity_pallets) * 100, 1) if w.total_capacity_pallets > 0 else 0,
                 "available_pallets": w.total_capacity_pallets - w.used_capacity_pallets
             }
             for w in warehouses
@@ -356,16 +370,19 @@ class AnalyticsService:
             for s in shipments if s.spoilage_risk > 15.0
         ]
 
+        # Use DB KPIs if available, else fallback to manual aggregation for robust dev testing
+        kpis = {
+            "total_shipments": kpis_db.get("total_shipments", len(shipments)),
+            "active_shipments": kpis_db.get("active_shipments", len([s for s in shipments if s.current_status in ["In Transit", "Warning", "Critical Breach", "Re-routed"]])),
+            "delivered_shipments": kpis_db.get("delivered_shipments", len([s for s in shipments if s.current_status == "Delivered"])),
+            "high_risk_shipments": kpis_db.get("high_risk_shipments", len([s for s in shipments if s.spoilage_risk > 25.0])),
+            "products_saved_units": kpis_db.get("products_saved_units", sum([s.quantity for s in shipments if s.current_status == "Delivered" or (s.spoilage_risk < 10.0 and s.current_status == "Re-routed")])),
+            "estimated_loss_prevented_usd": float(kpis_db.get("estimated_loss_prevented_usd", round(sum([s.shipment_value * 0.85 for s in shipments if s.health_score > 80.0]), 2))),
+            "carbon_saved_kg": float(kpis_db.get("total_carbon_saved_kg", round(sum([s.estimated_carbon_impact_kg * 8.5 for s in shipments if s.health_score > 80.0]), 1)))
+        }
+
         return {
-            "kpis": {
-                "total_shipments": total_shipments,
-                "active_shipments": active_shipments,
-                "delivered_shipments": delivered_shipments,
-                "high_risk_shipments": high_risk_shipments,
-                "products_saved_units": products_saved_units,
-                "estimated_loss_prevented_usd": estimated_loss_prevented_usd,
-                "carbon_saved_kg": carbon_saved_kg
-            },
+            "kpis": kpis,
             "status_distribution": status_distribution,
             "spoilage_risk_distribution": spoilage_risk_distribution,
             "product_categories_distribution": product_categories_distribution,

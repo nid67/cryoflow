@@ -1,25 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine, CartesianGrid } from 'recharts';
 import { apiService } from '../services/api';
+import { supabase } from '../services/supabaseClient';
 
 export default function ShipmentDetailsView({ shipmentId, onBack, onNavigateToPrediction, onNavigateToDecision }) {
   const [shipment, setShipment] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchDetails = async () => {
+  const fetchDetails = async (isInitial = true) => {
     try {
-      setLoading(true);
+      if (isInitial) setLoading(true);
       const data = await apiService.getShipmentDetails(shipmentId);
       setShipment(data);
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (shipmentId) fetchDetails();
+    if (shipmentId) {
+      fetchDetails(true);
+
+      const channel = supabase
+        .channel(`telemetry_logs_changes_${shipmentId}`)
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'telemetry_logs', filter: `shipment_id=eq.${shipmentId}` },
+          (payload) => {
+            console.log('New telemetry for shipment:', payload);
+            fetchDetails(false); // Update without showing loading state
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
   }, [shipmentId]);
 
   if (loading || !shipment) {
