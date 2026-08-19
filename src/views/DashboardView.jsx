@@ -10,6 +10,7 @@ export default function DashboardView({ onSelectShipment, onNavigate }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isSimulating, setIsSimulating] = useState(true);
 
   const fetchDashboard = async () => {
     try {
@@ -35,7 +36,6 @@ export default function DashboardView({ onSelectShipment, onNavigate }) {
         { event: 'INSERT', schema: 'public', table: 'telemetry_logs' },
         (payload) => {
           console.log('New telemetry record received:', payload);
-          // Re-fetch dashboard data to update temperature, health, risk, map position, alerts, KPIs
           fetchDashboard();
         }
       )
@@ -45,6 +45,22 @@ export default function DashboardView({ onSelectShipment, onNavigate }) {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  // Live IoT Simulator tick stream effect
+  useEffect(() => {
+    let interval;
+    if (isSimulating) {
+      interval = setInterval(async () => {
+        try {
+          await apiService.triggerSimulatorTick();
+          await fetchDashboard();
+        } catch (e) {
+          console.error('Simulator tick error:', e);
+        }
+      }, 5000);
+    }
+    return () => clearInterval(interval);
+  }, [isSimulating]);
 
   if (loading) {
     return (
@@ -76,21 +92,39 @@ export default function DashboardView({ onSelectShipment, onNavigate }) {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-extrabold text-on-surface">Global Control Center</h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold border border-emerald-300">
+            <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold border border-emerald-300 flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
               Live FastAPI Backend Connected
             </span>
           </div>
           <p className="text-xs text-on-surface-variant mt-1">Real-time thermal degradation telemetry & automated risk mitigation.</p>
         </div>
 
-        <button
-          onClick={fetchDashboard}
-          className="flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-container rounded-xl text-xs font-bold text-on-surface border border-outline-variant transition-all"
-        >
-          <span className="material-symbols-outlined text-[18px]">refresh</span>
-          Refresh Ingestion Stream
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsSimulating(!isSimulating)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+              isSimulating 
+                ? 'bg-emerald-600 text-white border-emerald-500 shadow-md shadow-emerald-600/30 animate-pulse' 
+                : 'bg-surface hover:bg-surface-container text-on-surface border-outline-variant'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[18px]">
+              {isSimulating ? 'sensors' : 'sensors_off'}
+            </span>
+            {isSimulating ? 'Live IoT Stream: ACTIVE (5s)' : 'Start Live IoT Stream'}
+          </button>
+
+          <button
+            onClick={fetchDashboard}
+            className="flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-container rounded-xl text-xs font-bold text-on-surface border border-outline-variant transition-all"
+          >
+            <span className="material-symbols-outlined text-[18px]">refresh</span>
+            Refresh Ingestion Stream
+          </button>
+        </div>
       </div>
+
 
       {/* Dynamic KPI Cards Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">

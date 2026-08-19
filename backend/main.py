@@ -264,3 +264,65 @@ def get_analytics_dashboard():
         recent_shipments=[shipment_to_response(s) for s in data["recent_shipments"]],
         ai_recommendations=data["ai_recommendations"]
     )
+
+# --- 8. Live Simulator Tick Endpoint ---
+@app.post("/api/v1/simulator/tick")
+def trigger_simulator_tick():
+    import random, uuid
+    from backend.models import Alert
+    shipments = db_repository.list_shipments()
+    updated = 0
+    for s in shipments:
+        if s.current_status in ["In Transit", "Warning"]:
+            temp_delta = round(random.uniform(-0.4, 0.6), 1)
+            new_temp = round(s.current_temp + temp_delta, 1)
+
+            metrics = ShipmentService.calculate_health_and_risk(
+                s.product_category, new_temp, s.transit_time_hours + 0.5, s.shipment_value
+            )
+
+            s.current_temp = new_temp
+            s.transit_time_hours += 0.5
+            s.spoilage_risk = metrics["spoilage_risk"]
+            s.health_score = metrics["health_score"]
+            s.remaining_shelf_life_days = metrics["remaining_shelf_life_days"]
+            s.estimated_financial_loss = metrics["financial_loss"]
+            s.estimated_carbon_impact_kg = metrics["carbon_impact_kg"]
+            s.latest_recommendation = metrics["recommendation"]
+            s.requires_decision = metrics["requires_decision"]
+
+            if metrics["spoilage_risk"] > 50.0 and s.current_status != "Critical Breach":
+                s.current_status = "Critical Breach"
+                alert = Alert(
+                    id=f"alt-{uuid.uuid4().hex[:6]}",
+                    shipment_id=s.id,
+                    warehouse_id=None,
+                    alert_type="Temperature Alert",
+                    severity="Critical",
+                    title=f"Critical Breach on {s.id}",
+                    message=f"Spoilage risk escalated to {metrics['spoilage_risk']}% at {new_temp}°C.",
+                    timestamp=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+                    resolved=False
+                )
+                db_repository.save_alert(alert)
+            elif metrics["spoilage_risk"] > 25.0 and s.current_status == "In Transit":
+                s.current_status = "Warning"
+
+            new_history_entry = {
+                "time": datetime.now(timezone.utc).strftime("%H:%M"),
+                "temp": new_temp,
+                "min_limit": metrics["min_limit"],
+                "max_limit": metrics["max_limit"]
+            }
+            if not isinstance(s.temp_history, list):
+                s.temp_history = []
+            s.temp_history.append(new_history_entry)
+
+            db_repository.save_shipment(s)
+            updated += 1
+
+    return {
+        "message": f"Simulator tick executed. Updated {updated} active shipments.",
+        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    }
+

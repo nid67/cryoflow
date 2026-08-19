@@ -107,5 +107,12 @@ export const apiService = {
   resolveAlert: async (id) => {
     const res = await apiClient.put(`/alerts/${id}/resolve`);
     return res.data;
+  },
+
+  // Live Simulator
+  triggerSimulatorTick: async () => {
+    const res = await apiClient.post('/simulator/tick');
+    return res.data;
   }
 };
+
