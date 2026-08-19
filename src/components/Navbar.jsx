@@ -12,7 +12,11 @@ export default function Navbar({ activeTab, setActiveTab, onOpenDemo, onOpenLogi
   ];
 
   const handleNavClick = (id) => {
-    setActiveTab(id);
+    if (['dashboard', 'shipments', 'shipment-details', 'prediction', 'decision', 'warehouses', 'alerts', 'analytics', 'profile'].includes(id) && !user) {
+      setActiveTab('login');
+    } else {
+      setActiveTab(id);
+    }
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -21,7 +25,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenDemo, onOpenLogi
     <header className="bg-surface/90 dark:bg-surface/90 backdrop-blur-md fixed top-0 w-full z-50 border-b border-outline-variant/30 shadow-sm transition-all">
       <div className={`flex justify-between items-center w-full h-[72px] ${isConsoleTab ? 'px-4' : 'px-4 md:px-lg max-w-7xl mx-auto'}`}>
         {/* Brand Container - Aligned with Sidebar width in Console Mode */}
-        <div className={`flex items-center gap-3 cursor-pointer ${isConsoleTab ? 'w-64 shrink-0' : ''}`} onClick={() => handleNavClick('platform')}>
+        <div className={`flex items-center gap-3 cursor-pointer ${isConsoleTab ? 'w-64 shrink-0' : ''}`} onClick={() => handleNavClick(user ? 'dashboard' : 'platform')}>
           <div className="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-white shadow-md shrink-0">
             <span className="material-symbols-outlined text-[24px]">ac_unit</span>
           </div>
@@ -45,7 +49,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenDemo, onOpenLogi
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`font-body-lg text-sm px-3 py-1.5 rounded-lg transition-all duration-200 ${
+                  className={`font-body-lg text-sm px-3 py-1.5 rounded-lg transition-all duration-200 cursor-pointer ${
                     isActive
                       ? 'text-primary font-bold bg-surface-container-high border-b-2 border-primary'
                       : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
@@ -60,24 +64,25 @@ export default function Navbar({ activeTab, setActiveTab, onOpenDemo, onOpenLogi
 
         {/* CTA & User Profile Buttons */}
         <div className="hidden md:flex items-center gap-md">
-          {user ? (
-            <div className="flex items-center gap-sm bg-surface-container px-md py-1.5 rounded-xl border border-outline-variant/50">
-              <div className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">
-                {user.name ? user.name.charAt(0) : 'A'}
-              </div>
-              <div className="text-left">
-                <p className="text-xs font-bold text-on-surface leading-tight">{user.name || 'Enterprise Admin'}</p>
-                <p className="text-[10px] text-on-surface-variant leading-tight">{user.organization || 'Apex Life Sciences'}</p>
-              </div>
+          {isConsoleTab ? (
+            /* Console Mode: Sidebar handles User Profile & Sign Out - Display clean Hub Status Pill */
+            <div className="flex items-center gap-2 bg-blue-50 text-blue-900 border border-blue-200 text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Console Active • {user?.name || 'Operations Lead'}</span>
+            </div>
+          ) : user ? (
+            /* Marketing View with Logged In User */
+            <div className="flex items-center gap-2.5">
               <button
-                onClick={onLogout}
-                title="Sign Out"
-                className="ml-2 text-on-surface-variant hover:text-red-600 p-1 rounded hover:bg-red-50 cursor-pointer"
+                onClick={() => handleNavClick('dashboard')}
+                className="text-xs font-bold bg-[#0065FF] text-white px-4 py-2 rounded-xl shadow-md hover:bg-[#0052cc] transition-all flex items-center gap-1.5 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[18px]">logout</span>
+                <span className="material-symbols-outlined text-[16px]">dashboard</span>
+                Go to Console
               </button>
             </div>
           ) : (
+            /* Marketing View Logged Out */
             <div className="flex items-center gap-2.5">
               <button
                 onClick={() => handleNavClick('login')}
