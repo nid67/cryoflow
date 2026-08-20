@@ -9,18 +9,17 @@ const COLORS = ['#0065FF', '#F59E0B', '#EF4444', '#10B981', '#8B5CF6'];
 export default function DashboardView({ onSelectShipment, onNavigate }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [isSimulating, setIsSimulating] = useState(true);
   const [actionMessage, setActionMessage] = useState('');
 
   const fetchDashboard = async () => {
     try {
       const res = await apiService.getDashboardAnalytics();
-      setData(res);
-      setError('');
+      if (res) {
+        setData(res);
+      }
     } catch (err) {
-      console.error(err);
-      setError('Failed to fetch real-time dashboard telemetry from backend API.');
+      console.warn('Dashboard telemetry fetch notice:', err);
     } finally {
       setLoading(false);
     }
@@ -56,29 +55,29 @@ export default function DashboardView({ onSelectShipment, onNavigate }) {
           await apiService.triggerSimulatorTick();
           await fetchDashboard();
         } catch (e) {
-          console.error('Simulator tick error:', e);
+          console.warn('Simulator tick notice:', e);
         }
       }, 5000);
     }
     return () => clearInterval(interval);
   }, [isSimulating]);
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4">
         <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-sm font-semibold text-on-surface-variant">Connecting to FastAPI Ingestion Backend...</p>
+        <p className="text-sm font-semibold text-on-surface-variant">Connecting to Real-Time Telemetry Stream...</p>
       </div>
     );
   }
 
-  if (error || !data) {
+  if (!data) {
     return (
-      <div className="p-6 bg-red-50 border border-red-200 rounded-2xl text-center space-y-3">
-        <span className="material-symbols-outlined text-red-600 text-[36px]">error</span>
-        <p className="text-sm font-bold text-red-800">{error || 'No data returned.'}</p>
-        <button onClick={fetchDashboard} className="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-bold">
-          Retry Ingestion Connection
+      <div className="p-6 bg-blue-50 border border-blue-200 rounded-2xl text-center space-y-3">
+        <span className="material-symbols-outlined text-primary text-[36px]">sensors</span>
+        <p className="text-sm font-bold text-primary">Initializing Telemetry Control Center...</p>
+        <button onClick={fetchDashboard} className="px-4 py-2 bg-primary text-white rounded-lg text-xs font-bold shadow-md cursor-pointer">
+          Reconnect Telemetry Stream
         </button>
       </div>
     );

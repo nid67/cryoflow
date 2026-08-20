@@ -6,6 +6,8 @@ from fastapi import FastAPI, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from datetime import datetime, timezone
+import uuid
+import random
 
 from backend.repositories import db_repository
 from backend.services import ShipmentService, PredictionService, DecisionService, WarehouseService, AnalyticsService
