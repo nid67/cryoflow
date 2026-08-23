@@ -1,5 +1,5 @@
 -- ==============================================================================
--- CRYOFLOW AI: 30-DAY HISTORICAL DATA SEED
+-- VALTWAY AI: 30-DAY HISTORICAL DATA SEED
 -- Generated: 2026-08-19 06:43 UTC
 -- Total Shipments: 35 | Telemetry Records: 700
 -- ==============================================================================

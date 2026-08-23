@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CryoFlow AI - Historical Batch Seeding Engine
+Valtway AI - Historical Batch Seeding Engine
 ============================================
 Populates Supabase PostgreSQL with approximately 20-50 realistic cold-chain shipments,
 high-frequency time-series telemetry logs, AI kinetic degradation predictions,
@@ -112,7 +112,7 @@ class HistoricalSeeder:
                     current_status = "Delivered"
 
             # Create deterministic UUID based on index for safe re-runs
-            shipment_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"cryoflow.shipment.{i}.{cat}.seed42"))
+            shipment_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"valtway.shipment.{i}.{cat}.seed42"))
             tracking_number = f"CRY-{8000 + i}"
 
             shipment_record = {
@@ -147,7 +147,7 @@ class HistoricalSeeder:
 
             # Telemetry Points
             for t_idx, tel in enumerate(shipment_obj.telemetry_logs):
-                tel_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"cryoflow.telemetry.{shipment_uuid}.{t_idx}"))
+                tel_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"valtway.telemetry.{shipment_uuid}.{t_idx}"))
                 all_telemetry.append({
                     "id": tel_uuid,
                     "shipment_id": shipment_uuid,
@@ -164,7 +164,7 @@ class HistoricalSeeder:
 
             # AI Predictions
             for p_idx, pred in enumerate(shipment_obj.predictions):
-                pred_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"cryoflow.prediction.{shipment_uuid}.{p_idx}"))
+                pred_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"valtway.prediction.{shipment_uuid}.{p_idx}"))
                 all_predictions.append({
                     "id": pred_uuid,
                     "shipment_id": shipment_uuid,
@@ -182,7 +182,7 @@ class HistoricalSeeder:
 
             # Alerts generation (for elevated risk shipments)
             if shipment_obj.spoilage_risk > 25.0:
-                alert_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"cryoflow.alert.{shipment_uuid}"))
+                alert_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"valtway.alert.{shipment_uuid}"))
                 severity = "Critical" if shipment_obj.spoilage_risk > 60.0 else "High"
                 resolved = is_historical
                 resolved_dt = (shipment_end_dt + timedelta(minutes=45)).strftime("%Y-%m-%d %H:%M UTC") if resolved else None
@@ -203,7 +203,7 @@ class HistoricalSeeder:
 
             # Decision Actions generation (for re-routed or liquidated historical shipments)
             if current_status in ["Re-routed", "Liquidated"] or shipment_obj.spoilage_risk > 50.0:
-                action_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"cryoflow.decision.{shipment_uuid}"))
+                action_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"valtway.decision.{shipment_uuid}"))
                 action_type = "Re-route" if current_status == "Re-routed" else "Secondary Marketplace" if current_status == "Liquidated" else "Nearest Warehouse"
                 action_dt = (shipment_start_dt + timedelta(hours=transit_duration_hours * 0.7)).strftime("%Y-%m-%d %H:%M UTC")
 
@@ -239,7 +239,7 @@ def generate_sql_script(
     """
     with open(output_path, "w", encoding="utf-8") as f:
         f.write("-- ==============================================================================\n")
-        f.write("-- CRYOFLOW AI: 30-DAY HISTORICAL DATA SEED\n")
+        f.write("-- VALTWAY AI: 30-DAY HISTORICAL DATA SEED\n")
         f.write(f"-- Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}\n")
         f.write(f"-- Total Shipments: {len(shipments)} | Telemetry Records: {len(telemetry)}\n")
         f.write("-- ==============================================================================\n\n")
@@ -398,7 +398,7 @@ def push_to_supabase_rest(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="CryoFlow AI - Historical 30-Day Batch Seeding Engine"
+        description="Valtway AI - Historical 30-Day Batch Seeding Engine"
     )
     parser.add_argument("--num-shipments", type=int, default=35, help="Number of shipments to generate (default: 35, recommended: 20-50)")
     parser.add_argument("--points", type=int, default=20, help="Historical telemetry records per shipment (default: 20)")
@@ -410,7 +410,7 @@ def main():
     args = parser.parse_args()
 
     print("=" * 70)
-    print("CRYOFLOW AI: HISTORICAL 30-DAY BATCH SEEDING")
+    print("VALTWAY AI: HISTORICAL 30-DAY BATCH SEEDING")
     print("=" * 70)
     print(f"Target: {args.num_shipments} shipments across a {args.days}-day historical timeline.")
     print(f"Telemetry density: {args.points} time-series points per shipment.")

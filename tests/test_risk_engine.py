@@ -1,5 +1,5 @@
 """
-Unit tests for the CryoFlow Risk and Kinetic Analysis Engine (backend/risk_engine.py)
+Unit tests for the Valtway Risk and Kinetic Analysis Engine (backend/risk_engine.py)
 """
 import os
 import sys
@@ -9,14 +9,14 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from backend.risk_engine import (
     DeterministicKineticRiskEngine,
     MLRiskEngineStub,
-    CryoFlowRiskService,
+    ValtwayRiskService,
     CATEGORY_PROFILES
 )
 
 class TestRiskEngine(unittest.TestCase):
     def setUp(self):
         self.engine = DeterministicKineticRiskEngine()
-        self.service = CryoFlowRiskService(engine=self.engine)
+        self.service = ValtwayRiskService(engine=self.engine)
 
     def test_category_envelopes(self):
         # mRNA Ultra-Cold Vaccine

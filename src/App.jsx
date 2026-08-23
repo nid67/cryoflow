@@ -23,7 +23,7 @@ import AlertsView from './views/AlertsView';
 import AnalyticsView from './views/AnalyticsView';
 import ProfileView from './views/ProfileView';
 
-const STORAGE_KEY = 'cryoflow_user_profile';
+const STORAGE_KEY = 'valtway_user_profile';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -36,7 +36,7 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error("CryoFlow Console UI Exception:", error, errorInfo);
+    console.error("Valtway Console UI Exception:", error, errorInfo);
   }
 
   render() {
@@ -71,7 +71,7 @@ export default function App() {
   
   const [user, setUser] = useState({
     id: 'usr-1',
-    email: 'admin@cryoflow.ai',
+    email: 'admin@valtway.ai',
     name: 'Dr. Elena Vance',
     role: 'Cold Operations Director',
     organization: 'Apex Life Sciences'

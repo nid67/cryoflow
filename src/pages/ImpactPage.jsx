@@ -8,7 +8,7 @@ export default function ImpactPage({ onOpenDemo }) {
   // Calculation Engine
   const totalValueAtRisk = annualShipments * avgCargoValue;
   const currentAnnualLoss = totalValueAtRisk * (spoilageRate / 100);
-  const cryoFlowSavings = currentAnnualLoss * 0.86; // 86% average reduction in spoilage
+  const valtwaySavings = currentAnnualLoss * 0.86; // 86% average reduction in spoilage
   const co2PreventedTons = Math.round(annualShipments * (spoilageRate / 100) * 1.85);
   const rescuedUnitsCount = Math.round(annualShipments * (spoilageRate / 100) * 45);
 
@@ -22,7 +22,7 @@ export default function ImpactPage({ onOpenDemo }) {
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold text-on-surface">Quantify Your Cold Chain Savings</h1>
         <p className="text-base text-on-surface-variant leading-relaxed">
-          See how much your organization can save in financial value, rescued product, and CO2 emission reductions with CryoFlow AI.
+          See how much your organization can save in financial value, rescued product, and CO2 emission reductions with Valtway AI.
         </p>
       </section>
 
@@ -91,7 +91,7 @@ export default function ImpactPage({ onOpenDemo }) {
           <div className="lg:col-span-6 bg-gradient-to-br from-[#071328] to-slate-900 text-white rounded-2xl p-8 space-y-6 shadow-2xl border border-slate-800">
             <div>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Estimated Annual Financial Loss Prevented</p>
-              <h2 className="text-4xl md:text-5xl font-black text-cyan-400 mt-2 font-mono">${(cryoFlowSavings / 1000000).toFixed(2)}M / yr</h2>
+              <h2 className="text-4xl md:text-5xl font-black text-cyan-400 mt-2 font-mono">${(valtwaySavings / 1000000).toFixed(2)}M / yr</h2>
             </div>
 
             <div className="grid grid-cols-2 gap-4 border-t border-slate-800 pt-4 text-xs font-semibold">

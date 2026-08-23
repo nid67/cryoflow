@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CryoFlow AI - Synthetic Cold-Chain Telemetry & Shipment Data Generator
+Valtway AI - Synthetic Cold-Chain Telemetry & Shipment Data Generator
 ======================================================================
 Simulates realistic, physics-based cold chain telemetry time-series,
 sensor fluctuations, thermal degradation kinetics, GPS route movements,
@@ -642,7 +642,7 @@ def export_to_sql(shipments: List[ShipmentRecord], filepath: str):
     """
     with open(filepath, "w", encoding="utf-8") as f:
         f.write("-- ==============================================================================\n")
-        f.write("-- CRYOFLOW AI: SYNTHETIC COLD-CHAIN TELEMETRY SEED DATA\n")
+        f.write("-- VALTWAY AI: SYNTHETIC COLD-CHAIN TELEMETRY SEED DATA\n")
         f.write(f"-- Generated At: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}\n")
         f.write(f"-- Total Shipments: {len(shipments)}\n")
         f.write("-- ==============================================================================\n\n")
@@ -721,7 +721,7 @@ def export_to_json(shipments: List[ShipmentRecord], filepath: str):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="CryoFlow AI Synthetic Cold-Chain Telemetry Generator"
+        description="Valtway AI Synthetic Cold-Chain Telemetry Generator"
     )
     parser.add_argument("--num-shipments", type=int, default=8, help="Number of shipments to generate (default: 8)")
     parser.add_argument("--points", type=int, default=16, help="Telemetry points per shipment (default: 16)")
@@ -734,7 +734,7 @@ def main():
     args = parser.parse_args()
 
     print("=" * 70)
-    print("CRYOFLOW AI: SYNTHETIC COLD-CHAIN TELEMETRY GENERATOR")
+    print("VALTWAY AI: SYNTHETIC COLD-CHAIN TELEMETRY GENERATOR")
     print("=" * 70)
     print(f"Generating {args.num_shipments} shipments with {args.points} time-series points each...")
     print(f"Sampling interval: {args.interval} minutes | Scenario mode: {args.scenario}")

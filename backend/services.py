@@ -1,5 +1,5 @@
 """
-Business Services Layer for CryoFlow AI.
+Business Services Layer for Valtway AI.
 Contains all calculation logic, prediction engine, decision center execution, and KPI aggregations.
 No business data is modified by the frontend — the backend is the source of truth.
 """

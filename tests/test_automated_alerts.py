@@ -8,7 +8,7 @@ import sqlite3
 import uuid
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from backend.risk_engine import CryoFlowRiskService
+from backend.risk_engine import ValtwayRiskService
 
 class TestAutomatedAlerts(unittest.TestCase):
     def setUp(self):

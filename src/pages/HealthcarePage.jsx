@@ -131,7 +131,7 @@ export default function HealthcarePage({ onNavigate, onOpenDemo }) {
                 <h3 className="text-xl font-extrabold text-on-surface">mRNA & Ultra-Cold Vaccine Management</h3>
               </div>
               <p className="text-sm text-on-surface-variant leading-relaxed">
-                Requires continuous LN2 dry shipper monitoring between -90°C and -60°C. CryoFlow AI alerts operations within 10 seconds of ambient heat transfer anomalies before core dry-ice sublimation reaches critical levels.
+                Requires continuous LN2 dry shipper monitoring between -90°C and -60°C. Valtway AI alerts operations within 10 seconds of ambient heat transfer anomalies before core dry-ice sublimation reaches critical levels.
               </p>
             </div>
           )}

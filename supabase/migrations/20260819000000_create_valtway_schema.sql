@@ -1,6 +1,6 @@
 -- ==============================================================================
--- CRYOFLOW AI: SUPABASE POSTGRESQL DATABASE SCHEMA MIGRATION
--- Migration: 20260819000000_create_cryoflow_schema.sql
+-- VALTWAY AI: SUPABASE POSTGRESQL DATABASE SCHEMA MIGRATION
+-- Migration: 20260819000000_create_valtway_schema.sql
 -- ==============================================================================
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

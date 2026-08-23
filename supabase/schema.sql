@@ -1,5 +1,5 @@
 -- ==============================================================================
--- CRYOFLOW AI: SUPABASE POSTGRESQL DATABASE SCHEMA
+-- VALTWAY AI: SUPABASE POSTGRESQL DATABASE SCHEMA
 -- Purpose: Cold-Chain Telemetry Monitoring, Kinetic Thermal Spoilage Prediction,
 --          and Actionable Decision Support System.
 -- ==============================================================================

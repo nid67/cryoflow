@@ -1,5 +1,5 @@
 """
-Domain models for CryoFlow AI Backend.
+Domain models for Valtway AI Backend.
 In-memory entities ready for SQLAlchemy / PostgreSQL migration.
 """
 from dataclasses import dataclass, field

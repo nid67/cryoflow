@@ -1,4 +1,4 @@
-# CryoFlow AI
+# Valtway AI
 
 **Predictive Cold Chain Logistics & Thermal Degradation Intelligence**
 
@@ -8,7 +8,7 @@ Every year, over $35 Billion in temperature-sensitive cargo (pharmaceutical vacc
 
 ## 🚀 The Core Innovation
 
-**CryoFlow AI** predicts thermal degradation **before** irreversible spoilage happens and recommends real-time recovery actions (e.g., Re-route to cold hub, Nearest Warehouse, Priority Express, or Secondary Marketplace Liquidation).
+**Valtway AI** predicts thermal degradation **before** irreversible spoilage happens and recommends real-time recovery actions (e.g., Re-route to cold hub, Nearest Warehouse, Priority Express, or Secondary Marketplace Liquidation).
 
 ## 🏗️ System Architecture & Technology Stack
 
@@ -39,8 +39,8 @@ The platform is designed with a modern, decoupled architecture:
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/nid67/cryoflow.git
-   cd cryoflow
+   git clone https://github.com/nid67/valtway.git
+   cd valtway
    ```
 2. Install dependencies:
    ```bash

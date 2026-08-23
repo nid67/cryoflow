@@ -1,5 +1,5 @@
 -- ==============================================================================
--- CRYOFLOW AI: SUPABASE SEED DATA
+-- VALTWAY AI: SUPABASE SEED DATA
 -- Purpose: Initial telemetry data, active shipments, prediction logs,
 --          decision action history, and alerts.
 -- ==============================================================================

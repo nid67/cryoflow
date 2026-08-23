@@ -31,7 +31,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenDemo, onOpenLogi
           </div>
           <div>
             <span className="text-headline-md font-headline-md font-bold text-on-surface dark:text-inverse-on-surface tracking-tight">
-              CryoFlow <span className="text-primary-container">AI</span>
+              Valtway <span className="text-primary-container">AI</span>
             </span>
             <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-label-md text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full w-fit">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>

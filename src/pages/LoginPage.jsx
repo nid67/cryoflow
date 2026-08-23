@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 export default function LoginPage({ onLoginSuccess, onNavigate }) {
-  const [email, setEmail] = useState('admin@cryoflow.ai');
+  const [email, setEmail] = useState('admin@valtway.ai');
   const [password, setPassword] = useState('••••••••••••');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +43,7 @@ export default function LoginPage({ onLoginSuccess, onNavigate }) {
   };
 
   const handleFillDemo = () => {
-    setEmail('admin@cryoflow.ai');
+    setEmail('admin@valtway.ai');
     setPassword('ColdChain2026!');
     setErrorMessage('');
   };
@@ -56,7 +56,7 @@ export default function LoginPage({ onLoginSuccess, onNavigate }) {
           <div className="w-14 h-14 rounded-2xl bg-primary-container text-white flex items-center justify-center mx-auto shadow-md">
             <span className="material-symbols-outlined text-[32px]">lock</span>
           </div>
-          <h2 className="text-headline-md font-bold text-on-surface">CryoFlow Enterprise Gateway</h2>
+          <h2 className="text-headline-md font-bold text-on-surface">Valtway Enterprise Gateway</h2>
           <p className="text-body-md text-on-surface-variant text-xs">
             21 CFR Part 11 & GxP Validated Single Sign-On Console
           </p>
@@ -123,7 +123,7 @@ export default function LoginPage({ onLoginSuccess, onNavigate }) {
               <input
                 type="email"
                 required
-                placeholder="admin@cryoflow.ai"
+                placeholder="admin@valtway.ai"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-outline-variant bg-surface focus:outline-none focus:border-primary text-sm text-on-surface"
@@ -160,7 +160,7 @@ export default function LoginPage({ onLoginSuccess, onNavigate }) {
               <input type="checkbox" defaultChecked className="rounded border-outline-variant text-primary focus:ring-primary" />
               Remember this device
             </label>
-            <a href="#forgot" onClick={(e) => { e.preventDefault(); alert("Please contact your organization's CryoFlow Security Administrator for password reset."); }} className="text-primary hover:underline">
+            <a href="#forgot" onClick={(e) => { e.preventDefault(); alert("Please contact your organization's Valtway Security Administrator for password reset."); }} className="text-primary hover:underline">
               Forgot password?
             </a>
           </div>

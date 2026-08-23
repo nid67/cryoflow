@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CryoFlow AI - Risk & Kinetic Degradation Evaluation CLI
+Valtway AI - Risk & Kinetic Degradation Evaluation CLI
 ======================================================
 CLI tool to test and evaluate risk metrics for a cold chain shipment.
 """
@@ -15,7 +15,7 @@ from backend.risk_engine import DeterministicKineticRiskEngine
 
 def main():
     parser = argparse.ArgumentParser(
-        description="CryoFlow AI - Risk & Kinetic Degradation Evaluator"
+        description="Valtway AI - Risk & Kinetic Degradation Evaluator"
     )
     parser.add_argument("--category", type=str, default="Vaccines", choices=["Vaccines", "Dairy", "Quick-Commerce Groceries", "Biologics"], help="Product category")
     parser.add_argument("--name", type=str, default="Clinical Vaccines", help="Product name")
@@ -34,9 +34,9 @@ def main():
         shipment_value=args.value
     )
 
-    print("=" * 70)
-    print(f"CRYOFLOW RISK EVALUATION: {args.name} ({args.category})")
-    print("=" * 70)
+    print("=" * 60)
+    print(f"VALTWAY RISK EVALUATION: {args.name} ({args.category})")
+    print("=" * 60)
     print(f"* Current Temperature:         {args.temp} C")
     print(f"* Transit Exposure Duration:   {args.hours} Hours")
     print(f"* Shipment Financial Value:    ${args.value:,.2f}")

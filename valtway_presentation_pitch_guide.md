@@ -1,13 +1,13 @@
-# 🎤 CryoFlow AI - Structured Hackathon Pitch & Solution Presentation Guide
+# 🎤 Valtway AI - Structured Hackathon Pitch & Solution Presentation Guide
 
-This guide provides a **step-by-step presentation script & technical pitch breakdown** for presenting **CryoFlow AI** to hackathon judges and enterprise stakeholders.
+This guide provides a **step-by-step presentation script & technical pitch breakdown** for presenting **Valtway AI** to hackathon judges and enterprise stakeholders.
 
 ---
 
 ## 📌 1. The Core Problem Statement & Value Proposition
 
 - **The Industry Pain Point**: Every year, **over $35 Billion** in temperature-sensitive cargo (pharmaceutical vaccines, mRNA biologics, organic dairy, and quick-commerce produce) is lost due to thermal excursions in transit.
-- **The Core Innovation**: Traditional cold chain systems only report historical temperature breaches *after* spoilage occurs. **CryoFlow AI** predicts thermal degradation **before** irreversible spoilage happens and recommends real-time recovery actions (*Re-route to cold hub, Nearest Warehouse, Priority Express, or Secondary Marketplace Liquidation*).
+- **The Core Innovation**: Traditional cold chain systems only report historical temperature breaches *after* spoilage occurs. **Valtway AI** predicts thermal degradation **before** irreversible spoilage happens and recommends real-time recovery actions (*Re-route to cold hub, Nearest Warehouse, Priority Express, or Secondary Marketplace Liquidation*).
 
 ---
 
@@ -63,7 +63,7 @@ This guide provides a **step-by-step presentation script & technical pitch break
   7. **Prescriptive Action Recommendation**: Recommended diversion to nearest cold hub.
 
 ### **Step 5: Decision Center & Automated Recovery Actions (Action Engine)**
-- **What to Explain**: *"Instead of just showing red alerts, CryoFlow AI provides an interactive Decision Center. The operator can choose from 5 prescriptive recovery actions."*
+- **What to Explain**: *"Instead of just showing red alerts, Valtway AI provides an interactive Decision Center. The operator can choose from 5 prescriptive recovery actions."*
 - **Action**: In Decision Center, click **"Nearest Warehouse"** or **"Re-route"**.
 - **What Happens Instantly**:
   - FastAPI backend processes the decision.

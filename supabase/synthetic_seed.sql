@@ -1,5 +1,5 @@
 -- ==============================================================================
--- CRYOFLOW AI: SYNTHETIC COLD-CHAIN TELEMETRY SEED DATA
+-- VALTWAY AI: SYNTHETIC COLD-CHAIN TELEMETRY SEED DATA
 -- Generated At: 2026-08-19 06:34 UTC
 -- Total Shipments: 8
 -- ==============================================================================

@@ -39,7 +39,7 @@ export default function DemoModal({ isOpen, onClose }) {
             </div>
             <h3 className="text-xl font-bold text-slate-900">Demo Session Requested!</h3>
             <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-              Thank you, <strong className="text-slate-900">{formData.name || 'Valued User'}</strong>. A CryoFlow AI Cold Chain Specialist will contact you within 2 business hours with a custom simulation tailored for <strong className="text-slate-900">{formData.company || 'your organization'}</strong>.
+              Thank you, <strong className="text-slate-900">{formData.name || 'Valued User'}</strong>. A Valtway AI Cold Chain Specialist will contact you within 2 business hours with a custom simulation tailored for <strong className="text-slate-900">{formData.company || 'your organization'}</strong>.
             </p>
           </div>
         ) : (

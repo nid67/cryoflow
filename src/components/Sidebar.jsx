@@ -64,7 +64,7 @@ export default function Sidebar({ activeTab, setActiveTab, user, onLogout }) {
 
       {/* Footer Branding */}
       <div className="pt-4 border-t border-slate-800 text-[10px] text-slate-500 font-mono text-center">
-        <span>CryoFlow AI v2.4 • 21 CFR Part 11</span>
+        <span>Valtway AI v2.4 • 21 CFR Part 11</span>
       </div>
     </aside>
   );

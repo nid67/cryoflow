@@ -7,7 +7,7 @@ from typing import List, Optional, Dict, Any
 
 # Authentication & Profile Schemas
 class LoginRequest(BaseModel):
-    email: str = Field(..., example="admin@cryoflow.ai")
+    email: str = Field(..., example="admin@valtway.ai")
     password: str = Field(..., example="ColdChain2026!")
 
 class LoginResponse(BaseModel):

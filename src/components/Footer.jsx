@@ -9,7 +9,7 @@ export default function Footer({ setActiveTab, onOpenDemo }) {
             <span className="material-symbols-outlined text-[18px]">ac_unit</span>
           </div>
           <span className="font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface">
-            CryoFlow AI
+            Valtway AI
           </span>
         </div>
 
@@ -29,13 +29,13 @@ export default function Footer({ setActiveTab, onOpenDemo }) {
           <button onClick={() => setActiveTab('impact')} className="text-on-surface-variant hover:text-primary underline transition-all font-label-md text-label-md">
             ROI Calculator
           </button>
-          <a href="#privacy" onClick={(e) => { e.preventDefault(); alert("CryoFlow AI adheres strictly to SOC2 Type II, ISO 27001, and 21 CFR Part 11 electronic records security standards."); }} className="text-on-surface-variant hover:text-primary underline transition-all font-label-md text-label-md">
+          <a href="#privacy" onClick={(e) => { e.preventDefault(); alert("Valtway AI adheres strictly to SOC2 Type II, ISO 27001, and 21 CFR Part 11 electronic records security standards."); }} className="text-on-surface-variant hover:text-primary underline transition-all font-label-md text-label-md">
             Privacy & Compliance
           </a>
         </div>
 
         <p className="font-body-md text-body-md text-on-surface-variant text-center md:text-right">
-          © 2026 CryoFlow AI. All rights reserved. Global cold chain intelligence.
+          © 2026 Valtway AI. All rights reserved. Global cold chain intelligence.
         </p>
       </div>
     </footer>

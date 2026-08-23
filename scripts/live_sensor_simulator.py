@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CryoFlow AI - Live Hourly IoT Cold-Chain Telemetry Simulator
+Valtway AI - Live Hourly IoT Cold-Chain Telemetry Simulator
 ============================================================
 Simulates continuous, real-time IoT sensor telemetry streams for active shipments.
 Generates NEW telemetry records ONCE EVERY 1 HOUR (default: 3600 seconds).
@@ -57,7 +57,7 @@ except ImportError:
 # ==============================================================================
 
 # Testing interval set to 1 MINUTE (60 seconds)
-DEFAULT_INTERVAL_SECONDS = 60
+DEFAULT_INTERVAL_SECONDS = 3600
 
 
 
@@ -473,7 +473,7 @@ class LiveColdChainSimulator:
         Main continuous simulation loop.
         """
         print("=" * 70)
-        print("CRYOFLOW AI: LIVE IOT COLD-CHAIN TELEMETRY SIMULATOR")
+        print("VALTWAY AI: LIVE IOT COLD-CHAIN TELEMETRY SIMULATOR")
         print("=" * 70)
         print(f"Cycle interval: {interval_seconds} seconds ({format_duration(interval_seconds)})")
         print(f"Next sensor cycle in {format_duration(interval_seconds)}")
@@ -510,7 +510,7 @@ class LiveColdChainSimulator:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="CryoFlow AI - Live Hourly IoT Cold-Chain Telemetry Simulator"
+        description="Valtway AI - Live Hourly IoT Cold-Chain Telemetry Simulator"
     )
     parser.add_argument(
         "--interval",
@@ -549,7 +549,7 @@ def main():
     simulator = LiveColdChainSimulator(dry_run=args.dry_run, force_excursion=args.force_excursion)
     
     print("==========================================================")
-    print("      CRYOFLOW AI - LIVE HOURLY SENSOR SIMULATOR")
+    print("      VALTWAY AI - LIVE HOURLY SENSOR SIMULATOR")
     print("==========================================================")
 
     # Graceful exit handler

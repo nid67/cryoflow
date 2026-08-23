@@ -1,5 +1,5 @@
 /**
- * API Client Service for CryoFlow AI Frontend.
+ * API Client Service for Valtway AI Frontend.
  * All CRUD operations and data queries call FastAPI REST Endpoints.
  * Includes intelligent dynamic URL resolution and seamless local state fallback
  * to guarantee 100% uptime and prevent errors on production deployments.
@@ -33,7 +33,7 @@ const apiClient = axios.create({
 // Internal State Store for Seamless Fallback
 let mockProfile = {
   id: 'usr-1',
-  email: 'admin@cryoflow.ai',
+  email: 'admin@valtway.ai',
   name: 'Dr. Elena Vance',
   role: 'Cold Operations Director',
   organization: 'Apex Life Sciences'

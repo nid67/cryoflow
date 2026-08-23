@@ -1,5 +1,5 @@
 """
-CryoFlow AI - Risk and Kinetic Analysis Engine
+Valtway AI - Risk and Kinetic Analysis Engine
 =============================================
 Computes cold-chain degradation metrics, spoilage risk percentages, health scores,
 remaining shelf life, financial loss risk, and prescriptive decision recommendations.
@@ -203,7 +203,7 @@ class DeterministicKineticRiskEngine(BaseRiskEngine):
 
         spoilage_risk = round(spoilage_risk, 1)
 
-        # 3. Classify Risk Level by CryoFlow Design Thresholds
+        # 3. Classify Risk Level by Valtway Design Thresholds
         if spoilage_risk > 60.0:
             risk_level = "CRITICAL BREACH"
             recommendation = (
@@ -285,7 +285,7 @@ class MLRiskEngineStub(BaseRiskEngine):
 # 6. RISK ENGINE SERVICE & DATABASE PROCESSOR
 # ==============================================================================
 
-class CryoFlowRiskService:
+class ValtwayRiskService:
     """
     Coordinates risk evaluations upon telemetry receipt, updates Supabase shipment records,
     persists ai_predictions records, and triggers sentinel alerts.
@@ -402,5 +402,8 @@ class CryoFlowRiskService:
 
         return risk_result, pred_record, shipment_update, alert_record
 
+# Backwards compatibility alias
+CryoFlowRiskService = ValtwayRiskService
+
 # Default singleton instance
-risk_service = CryoFlowRiskService()
+risk_service = ValtwayRiskService()

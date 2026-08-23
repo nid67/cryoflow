@@ -1,5 +1,5 @@
 -- ==============================================================================
--- CRYOFLOW AI: SUPABASE VERIFICATION SCRIPT (PostgreSQL)
+-- VALTWAY AI: SUPABASE VERIFICATION SCRIPT (PostgreSQL)
 -- Execute this script in the Supabase SQL Editor to verify the deployment.
 -- ==============================================================================
 

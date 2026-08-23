@@ -1,5 +1,5 @@
 """
-CryoFlow AI - Supabase Database Layer Verification & Integrity Test Suite
+Valtway AI - Supabase Database Layer Verification & Integrity Test Suite
 Verifies:
 1. All 6 Tables exist with expected column structures and data types.
 2. Foreign Key relationships match the architectural specifications.
@@ -13,7 +13,7 @@ import sys
 
 def test_sql_schema_and_views():
     print("=" * 70)
-    print("CRYOFLOW AI: SUPABASE POSTGRESQL VERIFICATION SUITE")
+    print("VALTWAY AI: SUPABASE POSTGRESQL VERIFICATION SUITE")
     print("=" * 70)
 
     # 1. Read SQL files

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
-  const [email, setEmail] = useState('admin@cryoflow.ai');
+  const [email, setEmail] = useState('admin@valtway.ai');
   const [password, setPassword] = useState('••••••••••••');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,10 +39,10 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
   const handleFillDemo = (roleType = 'admin') => {
     if (roleType === 'warehouse') {
-      setEmail('warehouse@cryoflow.ai');
+      setEmail('warehouse@valtway.ai');
       setPassword('ColdChain2026!');
     } else {
-      setEmail('admin@cryoflow.ai');
+      setEmail('admin@valtway.ai');
       setPassword('ColdChain2026!');
     }
   };
@@ -61,7 +61,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
           <div className="w-12 h-12 rounded-2xl bg-primary-container text-white flex items-center justify-center mx-auto mb-3 shadow-md">
             <span className="material-symbols-outlined text-[28px]">lock</span>
           </div>
-          <h3 className="text-headline-md font-bold text-on-surface">CryoFlow Console Login</h3>
+          <h3 className="text-headline-md font-bold text-on-surface">Valtway Console Login</h3>
           <p className="text-body-md text-on-surface-variant text-xs mt-1">21 CFR Part 11 Compliant Authentication Gateway</p>
         </div>
 
@@ -122,7 +122,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 <input
                   type="email"
                   required
-                  placeholder="admin@cryoflow.ai"
+                  placeholder="admin@valtway.ai"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-outline-variant bg-surface focus:outline-none focus:border-primary text-sm text-on-surface"
@@ -159,7 +159,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 <input type="checkbox" defaultChecked className="rounded border-outline-variant text-primary focus:ring-primary" />
                 Remember device
               </label>
-              <a href="#forgot" onClick={(e) => { e.preventDefault(); alert("Please contact your organization's CryoFlow Security Administrator for password reset."); }} className="text-primary hover:underline">
+              <a href="#forgot" onClick={(e) => { e.preventDefault(); alert("Please contact your organization's Valtway Security Administrator for password reset."); }} className="text-primary hover:underline">
                 Forgot password?
               </a>
             </div>

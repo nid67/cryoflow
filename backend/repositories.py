@@ -1,5 +1,5 @@
 """
-Supabase PostgreSQL Storage Repositories for CryoFlow AI Backend.
+Supabase PostgreSQL Storage Repositories for Valtway AI Backend.
 """
 import os
 from typing import List, Optional, Dict
@@ -19,9 +19,9 @@ class SupabaseRepository:
     def __init__(self):
         # We mock users as requested in hackathon/dev phase
         self.users: Dict[str, User] = {
-            "demo@cryoflow.ai": User(
+            "demo@valtway.ai": User(
                 id=str(uuid.uuid4()),
-                email="demo@cryoflow.ai",
+                email="demo@valtway.ai",
                 name="Dr. Elena Vance",
                 role="admin",
                 organization="Apex Life Sciences",
@@ -29,7 +29,7 @@ class SupabaseRepository:
             ),
             "usr-1": User(
                 id="usr-1",
-                email="admin@cryoflow.ai",
+                email="admin@valtway.ai",
                 name="Dr. Elena Vance",
                 role="Director of Cold Chain Logistics",
                 organization="Apex Life Sciences",

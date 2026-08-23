@@ -1,5 +1,5 @@
 -- ==============================================================================
--- CRYOFLOW AI: AUTOMATED SENTINEL ALERTS TRIGGER (POSTGRESQL / SUPABASE)
+-- VALTWAY AI: AUTOMATED SENTINEL ALERTS TRIGGER (POSTGRESQL / SUPABASE)
 -- Migration: 20260819000001_automated_alerts_trigger.sql
 -- Purpose: Automatically creates alerts and updates shipment status when
 --          telemetry breaches thermal thresholds or compressor fails.

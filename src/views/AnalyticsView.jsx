@@ -202,25 +202,25 @@ export default function AnalyticsView() {
   // Dynamic Financial Risk Computations
   const financialMetrics = useMemo(() => {
     const monthlyUnprotectedLoss = monthlyVolume * (spoilageRatePct / 100);
-    const monthlyPreventedSavings = monthlyUnprotectedLoss * 0.88; // 88% saved with CryoFlow AI
+    const monthlyPreventedSavings = monthlyUnprotectedLoss * 0.88; // 88% saved with Valtway AI
     const monthlyRemainingLoss = monthlyUnprotectedLoss - monthlyPreventedSavings;
     const monthlyInsuranceRisk = monthlyRemainingLoss * (1 - insuranceCoveragePct / 100);
     const annualSavings = monthlyPreventedSavings * 12;
 
     // Generate 12-month projections
     const chartProjections = [
-      { month: 'Jan', WithoutCryoFlow: Math.round(monthlyUnprotectedLoss / 1000), WithCryoFlow: Math.round(monthlyRemainingLoss / 1000) },
-      { month: 'Feb', WithoutCryoFlow: Math.round((monthlyUnprotectedLoss * 1.05) / 1000), WithCryoFlow: Math.round((monthlyRemainingLoss * 1.02) / 1000) },
-      { month: 'Mar', WithoutCryoFlow: Math.round((monthlyUnprotectedLoss * 1.1) / 1000), WithCryoFlow: Math.round((monthlyRemainingLoss * 0.95) / 1000) },
-      { month: 'Apr', WithoutCryoFlow: Math.round((monthlyUnprotectedLoss * 1.15) / 1000), WithCryoFlow: Math.round((monthlyRemainingLoss * 0.9) / 1000) },
-      { month: 'May', WithoutCryoFlow: Math.round((monthlyUnprotectedLoss * 1.25) / 1000), WithCryoFlow: Math.round((monthlyRemainingLoss * 0.85) / 1000) },
-      { month: 'Jun', WithoutCryoFlow: Math.round((monthlyUnprotectedLoss * 1.3) / 1000), WithCryoFlow: Math.round((monthlyRemainingLoss * 0.8) / 1000) },
-      { month: 'Jul', WithoutCryoFlow: Math.round((monthlyUnprotectedLoss * 1.2) / 1000), WithCryoFlow: Math.round((monthlyRemainingLoss * 0.82) / 1000) },
-      { month: 'Aug', WithoutCryoFlow: Math.round((monthlyUnprotectedLoss * 1.1) / 1000), WithCryoFlow: Math.round((monthlyRemainingLoss * 0.85) / 1000) },
-      { month: 'Sep', WithoutCryoFlow: Math.round((monthlyUnprotectedLoss * 1.05) / 1000), WithCryoFlow: Math.round((monthlyRemainingLoss * 0.88) / 1000) },
-      { month: 'Oct', WithoutCryoFlow: Math.round((monthlyUnprotectedLoss * 1.0) / 1000), WithCryoFlow: Math.round((monthlyRemainingLoss * 0.9) / 1000) },
-      { month: 'Nov', WithoutCryoFlow: Math.round((monthlyUnprotectedLoss * 0.95) / 1000), WithCryoFlow: Math.round((monthlyRemainingLoss * 0.88) / 1000) },
-      { month: 'Dec', WithoutCryoFlow: Math.round((monthlyUnprotectedLoss * 1.18) / 1000), WithCryoFlow: Math.round((monthlyRemainingLoss * 0.84) / 1000) },
+      { month: 'Jan', WithoutValtway: Math.round(monthlyUnprotectedLoss / 1000), WithValtway: Math.round(monthlyRemainingLoss / 1000) },
+      { month: 'Feb', WithoutValtway: Math.round((monthlyUnprotectedLoss * 1.05) / 1000), WithValtway: Math.round((monthlyRemainingLoss * 1.02) / 1000) },
+      { month: 'Mar', WithoutValtway: Math.round((monthlyUnprotectedLoss * 1.1) / 1000), WithValtway: Math.round((monthlyRemainingLoss * 0.95) / 1000) },
+      { month: 'Apr', WithoutValtway: Math.round((monthlyUnprotectedLoss * 1.15) / 1000), WithValtway: Math.round((monthlyRemainingLoss * 0.9) / 1000) },
+      { month: 'May', WithoutValtway: Math.round((monthlyUnprotectedLoss * 1.25) / 1000), WithValtway: Math.round((monthlyRemainingLoss * 0.85) / 1000) },
+      { month: 'Jun', WithoutValtway: Math.round((monthlyUnprotectedLoss * 1.3) / 1000), WithValtway: Math.round((monthlyRemainingLoss * 0.8) / 1000) },
+      { month: 'Jul', WithoutValtway: Math.round((monthlyUnprotectedLoss * 1.2) / 1000), WithValtway: Math.round((monthlyRemainingLoss * 0.82) / 1000) },
+      { month: 'Aug', WithoutValtway: Math.round((monthlyUnprotectedLoss * 1.1) / 1000), WithValtway: Math.round((monthlyRemainingLoss * 0.85) / 1000) },
+      { month: 'Sep', WithoutValtway: Math.round((monthlyUnprotectedLoss * 1.05) / 1000), WithValtway: Math.round((monthlyRemainingLoss * 0.88) / 1000) },
+      { month: 'Oct', WithoutValtway: Math.round((monthlyUnprotectedLoss * 1.0) / 1000), WithValtway: Math.round((monthlyRemainingLoss * 0.9) / 1000) },
+      { month: 'Nov', WithoutValtway: Math.round((monthlyUnprotectedLoss * 0.95) / 1000), WithValtway: Math.round((monthlyRemainingLoss * 0.88) / 1000) },
+      { month: 'Dec', WithoutValtway: Math.round((monthlyUnprotectedLoss * 1.18) / 1000), WithValtway: Math.round((monthlyRemainingLoss * 0.84) / 1000) },
     ];
 
     return {
@@ -611,7 +611,7 @@ export default function AnalyticsView() {
                 </div>
 
                 <div className="bg-emerald-50/70 p-4 rounded-xl border border-emerald-200 text-center">
-                  <span className="text-[10px] font-bold text-emerald-800 uppercase">CryoFlow Savings / Mo</span>
+                  <span className="text-[10px] font-bold text-emerald-800 uppercase">Valtway Savings / Mo</span>
                   <p className="text-xl font-extrabold text-emerald-700 mt-1">${Math.round(financialMetrics.monthlyPreventedSavings).toLocaleString()}</p>
                 </div>
 
@@ -635,8 +635,8 @@ export default function AnalyticsView() {
                       <YAxis stroke="#64748b" fontSize={11} />
                       <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
                       <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '4px' }} />
-                      <Bar dataKey="WithoutCryoFlow" fill="#ef4444" name="Loss Without CryoFlow ($k)" radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="WithCryoFlow" fill="#10b981" name="Remaining Loss With CryoFlow ($k)" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="WithoutValtway" fill="#ef4444" name="Loss Without Valtway ($k)" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="WithValtway" fill="#10b981" name="Remaining Loss With Valtway ($k)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

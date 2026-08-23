@@ -65,7 +65,7 @@ export default function PlatformPage({ onNavigate, onOpenDemo }) {
         </h1>
 
         <p className="text-base md:text-xl text-on-surface-variant max-w-3xl mb-8 leading-relaxed">
-          CryoFlow AI uses real-time cold-chain intelligence to predict spoilage, estimate remaining shelf life, and recommend proactive recovery actions before food, vaccines, and dairy products are lost.
+          Valtway AI uses real-time cold-chain intelligence to predict spoilage, estimate remaining shelf life, and recommend proactive recovery actions before food, vaccines, and dairy products are lost.
         </p>
 
         <div className="flex flex-wrap gap-4 justify-center">
@@ -144,7 +144,7 @@ export default function PlatformPage({ onNavigate, onOpenDemo }) {
             </div>
             <h2 className="text-headline-lg font-bold text-on-surface">Simulate Thermal Excursion Impact</h2>
             <p className="text-body-md text-on-surface-variant">
-              Adjust environmental variables below to witness how CryoFlow AI predicts freshness degradation and calculates remaining shelf life in real time.
+              Adjust environmental variables below to witness how Valtway AI predicts freshness degradation and calculates remaining shelf life in real time.
             </p>
 
             <div className="space-y-md pt-sm">
@@ -242,7 +242,7 @@ export default function PlatformPage({ onNavigate, onOpenDemo }) {
       <section className="py-md">
         <div className="text-center max-w-2xl mx-auto mb-xl">
           <h2 className="font-headline-lg text-headline-lg text-on-surface font-bold">Closed-Loop Recovery Architecture</h2>
-          <p className="font-body-md text-on-surface-variant mt-2">How CryoFlow AI turns raw telemetry into automated risk mitigation.</p>
+          <p className="font-body-md text-on-surface-variant mt-2">How Valtway AI turns raw telemetry into automated risk mitigation.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-md relative">

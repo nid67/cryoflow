@@ -1,5 +1,5 @@
 """
-FastAPI Main Entry Point & REST API Controllers for CryoFlow AI Backend.
+FastAPI Main Entry Point & REST API Controllers for Valtway AI Backend.
 Supports CORS for React frontend on any port.
 """
 from fastapi import FastAPI, HTTPException, Query, status
@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 import uuid
 import random
 
+from backend.models import User, Shipment, Warehouse, Alert
 from backend.repositories import db_repository
 from backend.services import ShipmentService, PredictionService, DecisionService, WarehouseService, AnalyticsService
 from backend.schemas import (
@@ -21,7 +22,7 @@ from backend.schemas import (
 )
 
 app = FastAPI(
-    title="CryoFlow AI Enterprise Backend API",
+    title="Valtway AI Enterprise Backend API",
     description="21 CFR Part 11 & GxP Validated Cold Chain Telemetry REST Backend",
     version="1.0.0"
 )
@@ -114,7 +115,7 @@ def login(req: LoginRequest):
     # Validate password
     if req.password == user.hashed_password or req.password in ["ColdChain2026!", "••••••••••••", "password", "admin"]:
         return LoginResponse(
-            access_token="cryoflow-jwt-valid-token-2026",
+            access_token="valtway-jwt-valid-token-2026",
             user={
                 "id": user.id,
                 "email": user.email,
